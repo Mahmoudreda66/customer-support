@@ -15,8 +15,12 @@ return new class extends Migration {
             $table->string('name');
             $table->string('phone', 15);
             $table->string('address', 255);
-            $table->longText('description');
+            $table->longText('description')->nullable();
             $table->string('serial_number')->nullable();
+            $table->foreignIdFor(\App\Models\Branch::class)
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->timestamps();
         });
     }
