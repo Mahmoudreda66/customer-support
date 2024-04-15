@@ -77,7 +77,7 @@ class CustomerResource extends Resource
                     ->formatStateUsing(fn(Customer $customer) => str($customer->address)->limit())
                     ->searchable(),
                 Tables\Columns\TextColumn::make('serial_number')
-                    ->formatStateUsing(fn(Customer $customer) => $customer->serial_number ?? 'لا يوجد')
+                    ->state(fn(Customer $customer) => $customer->serial_number ?? 'لا يوجد')
                     ->label('رقم السيريال')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('branch.name')
