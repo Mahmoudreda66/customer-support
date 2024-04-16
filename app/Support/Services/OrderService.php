@@ -14,4 +14,15 @@ class OrderService
         'called' => 'تم الاتصال',
         'refactor' => 'مرتجع للصيانة'
     ];
+
+    public static function colors($state): string
+    {
+        return match ($state) {
+            'created', 'refactor' => 'warning',
+            'working' => 'info',
+            'pending', 'cancelled' => 'danger',
+            'handed', 'finished', 'called' => 'success',
+        };
+
+    }
 }

@@ -76,12 +76,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(fn(Order $order) => OrderService::STATUSES[$order->status])
-                    ->color(fn(string $state): string => match ($state) {
-                        'created', 'refactor' => 'warning',
-                        'working' => 'info',
-                        'pending', 'cancelled' => 'danger',
-                        'handed', 'finished', 'called' => 'success',
-                    })
+                    ->color(fn(string $state): string => OrderService::colors($state))
                     ->label('الحالة'),
                 Tables\Columns\TextColumn::make('deadline')
                     ->state(fn(Order $order) => $order->deadline ? $order->deadline->format('Y-m-d h:i A') : 'لا يوجد')
@@ -131,6 +126,7 @@ class OrderResource extends Resource
                         Forms\Components\Select::make('status')
                             ->label('حالة الطلب')
                             ->required()
+                            ->notIn(fn(Order $order) => [$order->status])
                             ->default(fn(Order $order) => $order->status)
                             ->options(OrderService::STATUSES),
                         Forms\Components\RichEditor::make('description')
