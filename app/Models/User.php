@@ -17,6 +17,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
     ];
+
     protected $casts = [
         'password' => 'hashed',
     ];

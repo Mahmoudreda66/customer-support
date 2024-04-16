@@ -14,11 +14,11 @@ class ManageUsers extends ManageRecords
     {
         return [
             Actions\CreateAction::make()
-            ->mutateFormDataUsing(function (array $data) {
-                $data['password'] = bcrypt($data['password']);
+                ->mutateFormDataUsing(function (array $data) {
+                    $data['password'] = bcrypt($data['password']);
 
-                return $data;
-            }),
+                    return $data;
+                }),
         ];
     }
 }

@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Order;
 use App\Models\SystemLog;
-use App\Models\User;
 use App\Support\Services\OrderService;
 use Exception;
 use Filament\Forms;
@@ -15,7 +14,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\DB;
 
 class OrderResource extends Resource
@@ -75,15 +73,15 @@ class OrderResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->formatStateUsing(fn(Order $order) => OrderService::STATUSES[$order->status])
-                    ->color(fn(string $state): string => OrderService::colors($state))
+                    ->formatStateUsing(fn (Order $order) => OrderService::STATUSES[$order->status])
+                    ->color(fn (string $state): string => OrderService::colors($state))
                     ->label('الحالة'),
                 Tables\Columns\TextColumn::make('deadline')
-                    ->state(fn(Order $order) => $order->deadline ? $order->deadline->format('Y-m-d h:i A') : 'لا يوجد')
+                    ->state(fn (Order $order) => $order->deadline ? $order->deadline->format('Y-m-d h:i A') : 'لا يوجد')
                     ->label('وقت الانتهاء')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->state(fn(Order $order) => $order->user?->name ?? 'غير معروف')
+                    ->state(fn (Order $order) => $order->user?->name ?? 'غير معروف')
                     ->label('مٌنشئ الطلب')
                     ->numeric()
                     ->sortable(),
@@ -109,13 +107,13 @@ class OrderResource extends Resource
                         return $query
                             ->when(
                                 $data['from'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
                             )
                             ->when(
                                 $data['to'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
-                    })
+                    }),
             ])
             ->actions([
                 Tables\Actions\Action::make('updateStatus')
@@ -126,15 +124,15 @@ class OrderResource extends Resource
                         Forms\Components\Select::make('status')
                             ->label('حالة الطلب')
                             ->required()
-                            ->notIn(fn(Order $order) => [$order->status])
-                            ->default(fn(Order $order) => $order->status)
+                            ->notIn(fn (Order $order) => [$order->status])
+                            ->default(fn (Order $order) => $order->status)
                             ->options(OrderService::STATUSES),
                         Forms\Components\RichEditor::make('description')
                             ->label('وصف العملية')
                             ->required()
-                            ->string()
+                            ->string(),
                     ])
-                    ->action(function (array $data, Order $order) use ($table) {
+                    ->action(function (array $data, Order $order) {
                         try {
                             DB::beginTransaction();
 
@@ -144,7 +142,7 @@ class OrderResource extends Resource
                                 'user_id' => auth()->id(),
                                 'to_model' => Order::class,
                                 'to_id' => $order->id,
-                                'data' => ['status' => $data['status'], 'description' => $data['description']]
+                                'data' => ['status' => $data['status'], 'description' => $data['description']],
                             ]);
 
                             DB::commit();
@@ -164,6 +162,7 @@ class OrderResource extends Resource
                     }),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -27,7 +27,7 @@ class ListCustomers extends ListRecords
 
         foreach (Branch::query()->get() as $branch) {
             $tabs[] = Tab::make($branch->name)
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('branch_id', $branch->id))
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('branch_id', $branch->id))
                 ->badge(Customer::query()->where('branch_id', $branch->id)->count());
         }
 

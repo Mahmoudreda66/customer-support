@@ -12,7 +12,7 @@ class OrderService
         'finished' => 'تم الإنتهاء من الصيانة',
         'handed' => 'تم التسليم',
         'called' => 'تم الاتصال',
-        'refactor' => 'مرتجع للصيانة'
+        'refactor' => 'مرتجع للصيانة',
     ];
 
     public static function colors($state): string

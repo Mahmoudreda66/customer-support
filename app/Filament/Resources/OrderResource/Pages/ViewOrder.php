@@ -8,14 +8,11 @@ use App\Models\SystemLog;
 use App\Models\User;
 use App\Support\Services\OrderService;
 use App\Support\Services\UserService;
-use Filament\Forms\Components\Field;
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ViewField;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -66,6 +63,11 @@ class ViewOrder extends Page implements HasTable
                     ->badge()
                     ->color(fn(string $state): string => OrderService::colors($state))
                     ->label('حالة الطلب'),
+                TextColumn::make('data.description')
+                    ->limit(50)
+                    ->html()
+                    ->placeholder('لا يوجد')
+                    ->label('وصف الطلب'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->label('تاريخ العملية'),
@@ -80,11 +82,14 @@ class ViewOrder extends Page implements HasTable
                     ->form([
                         RichEditor::make('data.description')
                             ->label('الوصف')
-                            ->disabled()
-                    ])
+                            ->disabled(),
+                    ]),
             ])
             ->bulkActions([
-                // ...
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
+                        ->pluralModelLabel('العمليات')
+                ]),
             ]);
     }
 }

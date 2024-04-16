@@ -14,7 +14,7 @@ class Order extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'deadline' => 'datetime'
+        'deadline' => 'datetime',
     ];
 
     public function customer(): BelongsTo

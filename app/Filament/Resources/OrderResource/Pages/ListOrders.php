@@ -5,6 +5,7 @@ namespace App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource;
 use App\Models\Branch;
 use App\Models\Customer;
+use App\Models\Order;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
@@ -28,7 +29,7 @@ class ListOrders extends ListRecords
         foreach (Branch::query()->get() as $branch) {
             $tabs[] = Tab::make($branch->name)
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('branch_id', $branch->id))
-                ->badge(Customer::query()->where('branch_id', $branch->id)->count());
+                ->badge(Order::query()->where('branch_id', $branch->id)->count());
         }
 
         return $tabs;

@@ -3,16 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CustomerResource\Pages;
-use App\Filament\Resources\CustomerResource\RelationManagers;
 use App\Models\Customer;
-use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CustomerResource extends Resource
 {
@@ -23,7 +19,6 @@ class CustomerResource extends Resource
     protected static ?string $pluralLabel = 'العملاء';
 
     protected static ?string $navigationGroup = 'الدعم الفني';
-
 
     protected static ?string $model = Customer::class;
 
@@ -58,7 +53,7 @@ class CustomerResource extends Resource
                     ->label('الفرع التابع')
                     ->required()
                     ->default(auth()->user()->branch_id)
-                    ->relationship('branch', 'name')
+                    ->relationship('branch', 'name'),
             ]);
     }
 
@@ -74,10 +69,10 @@ class CustomerResource extends Resource
                     ->label('رقم الهاتف'),
                 Tables\Columns\TextColumn::make('address')
                     ->label('العنوان')
-                    ->formatStateUsing(fn(Customer $customer) => str($customer->address)->limit())
+                    ->formatStateUsing(fn (Customer $customer) => str($customer->address)->limit())
                     ->searchable(),
                 Tables\Columns\TextColumn::make('serial_number')
-                    ->state(fn(Customer $customer) => $customer->serial_number ?? 'لا يوجد')
+                    ->state(fn (Customer $customer) => $customer->serial_number ?? 'لا يوجد')
                     ->label('رقم السيريال')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('branch.name')
@@ -92,7 +87,7 @@ class CustomerResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('branch_id')
                     ->label('الفرع')
-                    ->relationship('branch', 'name')
+                    ->relationship('branch', 'name'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

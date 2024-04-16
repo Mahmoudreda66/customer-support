@@ -13,7 +13,7 @@ class SystemLog extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'data' => 'json'
+        'data' => 'json',
     ];
 
     public function orders(): BelongsTo

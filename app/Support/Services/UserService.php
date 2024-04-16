@@ -9,6 +9,6 @@ class UserService
         'accountant' => 'محاسب',
         'customer_support' => 'خدمة عملاء',
         'maintenance' => 'مهندس صيانة',
-        'data_entry' => 'مدخل بيانات'
+        'data_entry' => 'مدخل بيانات',
     ];
 }
