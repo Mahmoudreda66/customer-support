@@ -68,10 +68,11 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('branch.name')
                     ->label('الفرع')
+                    ->placeholder('مستخدم عام')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('role')
-                    ->formatStateUsing(fn (User $user) => UserService::JOBS[$user->role])
+                    ->formatStateUsing(fn(User $user) => UserService::JOBS[$user->role])
                     ->label('الوظيفة')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')

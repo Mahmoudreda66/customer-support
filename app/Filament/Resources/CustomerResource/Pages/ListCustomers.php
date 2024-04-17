@@ -5,6 +5,7 @@ namespace App\Filament\Resources\CustomerResource\Pages;
 use App\Filament\Resources\CustomerResource;
 use App\Models\Branch;
 use App\Models\Customer;
+use App\Models\Order;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
@@ -23,11 +24,14 @@ class ListCustomers extends ListRecords
 
     public function getTabs(): array
     {
-        $tabs = [];
+        $tabs = [
+            Tab::make('جميع العملاء')
+                ->badge(Customer::query()->count())
+        ];
 
         foreach (Branch::query()->get() as $branch) {
             $tabs[] = Tab::make($branch->name)
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('branch_id', $branch->id))
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('branch_id', $branch->id))
                 ->badge(Customer::query()->where('branch_id', $branch->id)->count());
         }
 
