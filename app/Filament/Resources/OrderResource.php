@@ -4,17 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Order;
-use App\Models\SystemLog;
 use App\Support\Services\OrderService;
 use Exception;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 
 class OrderResource extends Resource
 {
@@ -116,50 +113,7 @@ class OrderResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\Action::make('updateStatus')
-                    ->label('حالة الطلب')
-                    ->icon('heroicon-m-arrow-path')
-                    ->color('success')
-                    ->form([
-                        Forms\Components\Select::make('status')
-                            ->label('حالة الطلب')
-                            ->required()
-                            ->notIn(fn (Order $order) => [$order->status])
-                            ->default(fn (Order $order) => $order->status)
-                            ->options(OrderService::STATUSES),
-                        Forms\Components\RichEditor::make('description')
-                            ->label('وصف العملية')
-                            ->required()
-                            ->string(),
-                    ])
-                    ->action(function (array $data, Order $order) {
-                        try {
-                            DB::beginTransaction();
-
-                            $order->update(['status' => $data['status']]);
-
-                            SystemLog::query()->create([
-                                'user_id' => auth()->id(),
-                                'to_model' => Order::class,
-                                'to_id' => $order->id,
-                                'data' => ['status' => $data['status'], 'description' => $data['description']],
-                            ]);
-
-                            DB::commit();
-
-                            Notification::make()
-                                ->title('تم تحديث الحالة بنجاح')
-                                ->success()
-                                ->send();
-                        } catch (Exception) {
-                            DB::rollBack();
-
-                            Notification::make()
-                                ->title('لقد حدث خطأ غير متوقع')
-                                ->danger()
-                                ->send();
-                        }
-                    }),
+                OrderService::changeStatusAction(),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

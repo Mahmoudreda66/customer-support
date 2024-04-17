@@ -8,6 +8,8 @@ use App\Models\SystemLog;
 use App\Models\User;
 use App\Support\Services\OrderService;
 use App\Support\Services\UserService;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\RichEditor;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
@@ -28,6 +30,8 @@ class ViewOrder extends Page implements HasTable
     protected static string $resource = OrderResource::class;
 
     protected static string $view = 'filament.resources.order-resource.pages.view-order';
+
+    public string $activeTab = 'order';
 
     public function mount(Order $record): void
     {
@@ -88,8 +92,20 @@ class ViewOrder extends Page implements HasTable
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->pluralModelLabel('العمليات')
+                        ->pluralModelLabel('العمليات'),
                 ]),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            OrderService::changeStatusAction(false),
+            EditAction::make()
+                ->url(route('filament.admin.resources.orders.edit', $this->record->id))
+                ->icon('heroicon-o-pencil-square'),
+            DeleteAction::make()
+                ->icon('heroicon-o-trash'),
+        ];
     }
 }
