@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrderResource\Pages;
+use App\Models\Customer;
 use App\Models\Order;
 use App\Support\Services\OrderService;
 use Exception;
@@ -36,11 +37,13 @@ class OrderResource extends Resource
                 Forms\Components\Select::make('customer_id')
                     ->searchable()
                     ->preload()
+                    ->default(request('customer_id'))
                     ->label('العميل')
                     ->relationship('customer', 'name')
                     ->required(),
                 Forms\Components\Select::make('branch_id')
                     ->label('الفرع')
+                    ->default(request()->filled('customer_id') ? Customer::query()->find(request('customer_id'))?->branch_id : null)
                     ->relationship('branch', 'name')
                     ->required(),
                 Forms\Components\RichEditor::make('description')
@@ -70,15 +73,15 @@ class OrderResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->formatStateUsing(fn (Order $order) => OrderService::STATUSES[$order->status])
-                    ->color(fn (string $state): string => OrderService::colors($state))
+                    ->formatStateUsing(fn(Order $order) => OrderService::STATUSES[$order->status])
+                    ->color(fn(string $state): string => OrderService::colors($state))
                     ->label('الحالة'),
                 Tables\Columns\TextColumn::make('deadline')
-                    ->state(fn (Order $order) => $order->deadline ? $order->deadline->format('Y-m-d h:i A') : 'لا يوجد')
+                    ->state(fn(Order $order) => $order->deadline ? $order->deadline->format('Y-m-d h:i A') : 'لا يوجد')
                     ->label('وقت الانتهاء')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->state(fn (Order $order) => $order->user?->name ?? 'غير معروف')
+                    ->state(fn(Order $order) => $order->user?->name ?? 'غير معروف')
                     ->label('مٌنشئ الطلب')
                     ->numeric()
                     ->sortable(),
@@ -104,11 +107,11 @@ class OrderResource extends Resource
                         return $query
                             ->when(
                                 $data['from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
                             )
                             ->when(
                                 $data['to'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
                     }),
             ])

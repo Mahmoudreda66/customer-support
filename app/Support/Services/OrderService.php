@@ -18,7 +18,7 @@ class OrderService
         'working' => 'جاري العمل',
         'pending' => 'طلب مُعلق',
         'cancelled' => 'تم الإلغاء',
-        'finished' => 'تم الإنتهاء من الصيانة',
+        'finished' => 'إنتهت الصيانة',
         'handed' => 'تم التسليم',
         'called' => 'تم الاتصال',
         'refactor' => 'مرتجع للصيانة',

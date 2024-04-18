@@ -36,6 +36,7 @@ class ViewCustomer extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table->query(Order::query()->whereHas('customer', fn($q) => $q->where('customer_id', $this->record->id))->latest())
+            ->pluralModelLabel('طلبات')
             ->columns([
                 TextColumn::make('branch.name')
                     ->label('الفرع')
@@ -69,6 +70,15 @@ class ViewCustomer extends Page implements HasTable
                     ->label('عرض التفاصيل')
                     ->color('gray')
                     ->icon('heroicon-o-eye'),
+            ])
+            ->headerActions([
+                Action::make('add-order')
+                    ->url(
+                        route('filament.admin.resources.orders.create', ['customer_id' => $this->record->id])
+                    )
+                    ->openUrlInNewTab()
+                    ->label('إنشاء طلب جديد')
+                    ->icon('heroicon-o-plus'),
             ]);
     }
 
