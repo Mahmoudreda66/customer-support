@@ -55,7 +55,6 @@ class OrderService
                     ->options(OrderService::STATUSES),
                 RichEditor::make('description')
                     ->label('وصف العملية')
-                    ->required()
                     ->string(),
             ])
             ->action(function (array $data, Order $order) {

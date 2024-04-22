@@ -66,6 +66,9 @@
                 <li class="mb-2">
                     العنوان: {{ $record->customer->address }}
                 </li>
+                <li class="mb-2">
+                    موظف الصيانة: {{ $record->repairer_engineer?->name ?? 'لم يتم التكليف' }}
+                </li>
                 <hr style="margin: 20px 0">
                 {!! $record->description ?? 'لا يوجد' !!}
             </ul>

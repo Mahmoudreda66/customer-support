@@ -50,6 +50,11 @@ class OrderResource extends Resource
                     ->label('وصف الطلب')
                     ->required()
                     ->columnSpanFull(),
+                Forms\Components\TextInput::make('serial_number')
+                    ->required()
+                    ->string()
+                    ->maxLength('191')
+                    ->label('سيريال الماكينة'),
                 Forms\Components\DateTimePicker::make('deadline')
                     ->label('وقت الانتهاء الأقصى / Deadline'),
             ]);
@@ -62,6 +67,15 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('#')
+                    ->searchable()
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('serial_number')
+                    ->label('سيريال')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('customer.name')
                     ->label('العميل')
                     ->searchable()
@@ -85,6 +99,10 @@ class OrderResource extends Resource
                     ->label('مٌنشئ الطلب')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('repairer_name')
+                    ->state(fn(Order $order) => $order->repairer_engineer?->name)
+                    ->placeholder('لم يتم الاستلام')
+                    ->label('موظف الصيانة'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('تاريخ الإنشاء')
                     ->dateTime()

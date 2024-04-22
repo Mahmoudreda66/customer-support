@@ -37,4 +37,12 @@ class Order extends Model
         return $this->hasMany(SystemLog::class, 'to_id')
             ->where('to_model', self::class);
     }
+
+    public function getRepairerEngineerAttribute() // the engineer that received the machine
+    {
+        return $this->logs()
+            ->whereJsonContains('data->status', 'working')
+            ->first()
+            ?->user;
+    }
 }
