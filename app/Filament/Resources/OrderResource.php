@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Customer;
+use App\Models\MachineType;
 use App\Models\Order;
 use App\Support\Services\OrderService;
 use Exception;
@@ -50,11 +51,28 @@ class OrderResource extends Resource
                     ->label('وصف الطلب')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('serial_number')
-                    ->required()
-                    ->string()
-                    ->maxLength('191')
-                    ->label('سيريال الماكينة'),
+                Forms\Components\Fieldset::make('بيانات الماكينة')
+                    ->schema([
+                        Forms\Components\Grid::make(3)
+                        ->schema([
+                            Forms\Components\Select::make('machine_type_id')
+                                ->searchable()
+                                ->nullable()
+                                ->relationship('machineType', 'name')
+                                ->preload()
+                                ->label('نوع الماكينة'),
+                            Forms\Components\TextInput::make('serial_number')
+                                ->nullable()
+                                ->string()
+                                ->maxLength('191')
+                                ->label('سيريال الماكينة'),
+                            Forms\Components\TextInput::make('machine_model')
+                                ->nullable()
+                                ->string()
+                                ->maxLength('191')
+                                ->label('موديل الماكينة'),
+                        ])
+                    ]),
                 Forms\Components\DateTimePicker::make('deadline')
                     ->label('وقت الانتهاء الأقصى / Deadline'),
             ]);

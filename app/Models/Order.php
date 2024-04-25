@@ -38,6 +38,11 @@ class Order extends Model
             ->where('to_model', self::class);
     }
 
+    public function machineType(): BelongsTo
+    {
+        return $this->belongsTo(MachineType::class);
+    }
+
     public function getRepairerEngineerAttribute() // the engineer that received the machine
     {
         return $this->logs()

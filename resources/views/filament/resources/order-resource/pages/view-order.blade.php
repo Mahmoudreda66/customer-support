@@ -64,7 +64,13 @@
                     وقت الإنتهاء المٌقدر: {{ $record->deadline ?? 'غير محدد' }}
                 </li>
                 <li class="mb-2">
-                    العنوان: {{ $record->customer->address }}
+                    سيريال الماكينة: {{ $record->serial_number ?? 'غير معروف' }}
+                </li>
+                <li class="mb-2">
+                    نوع الماكينة: {{ $record->machineType?->name ?? 'غير معروف' }}
+                </li>
+                <li class="mb-2">
+                    موديل الماكينة: {{ $record->machine_model ?? 'غير معروف' }}
                 </li>
                 <li class="mb-2">
                     موظف الصيانة: {{ $record->repairer_engineer?->name ?? 'لم يتم التكليف' }}
