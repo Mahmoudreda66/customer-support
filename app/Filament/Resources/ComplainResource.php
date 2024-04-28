@@ -112,6 +112,7 @@ class ComplainResource extends Resource
                 ComplainService::addNoteAction(),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
