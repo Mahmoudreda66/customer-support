@@ -1,11 +1,9 @@
-@php use App\Support\Services\OrderService; @endphp
 <x-filament-panels::page>
-
     <x-filament::tabs>
         <x-filament::tabs.item
-            :active="$activeTab === 'order'"
-            wire:click="$set('activeTab', 'order')">
-            بيانات الطلب
+            :active="$activeTab === 'complain'"
+            wire:click="$set('activeTab', 'complain')">
+            بيانات الشكوى
         </x-filament::tabs.item>
 
         <x-filament::tabs.item
@@ -17,7 +15,7 @@
 
     <x-filament::section>
         <x-slot name="heading">
-            بيانات {{ $activeTab === 'customer' ? 'العميل' : 'الطلب' }}
+            بيانات {{ $activeTab === 'customer' ? 'العميل' : 'الشكوى' }}
         </x-slot>
 
         @if($activeTab === 'customer')
@@ -49,41 +47,30 @@
                 عرض ملف العميل
             </x-filament::button>
         @else
-            <x-filament::badge :color="OrderService::colors($record->status)" size="lg" class="mb-5"
+            <x-filament::badge :color="\App\Support\Services\ComplainService::colors($record->type)" size="lg" class="mb-5"
                                style="padding: .75rem 0; font-size: 0.85rem;">
-                {{ OrderService::STATUSES[$record->status] }}
+                {{ \App\Support\Services\ComplainService::TYPES[$record->type] }}
             </x-filament::badge>
             <ul>
                 <li class="mb-2">
                     مُنشئ الطلب: {{ $record->user->name }}
                 </li>
                 <li class="mb-2">
-                    الفرع: {{ $record->branch->name }}
-                </li>
-                <li class="mb-2">
-                    وقت الإنتهاء المٌقدر: {{ $record->deadline ?? 'غير محدد' }}
-                </li>
-                <li class="mb-2">
-                    سيريال الماكينة: {{ $record->serial_number ?? 'غير معروف' }}
-                </li>
-                <li class="mb-2">
                     نوع الماكينة: {{ $record->machineType?->name ?? 'غير معروف' }}
                 </li>
                 <li class="mb-2">
-                    موديل الماكينة: {{ $record->machineModel?->model ?? 'غير معروف' }}
+                    موديل الماكينة: {{ $record->machine_model ?? 'غير معروف' }}
                 </li>
                 <li class="mb-2">
-                    موظف الصيانة: {{ $record->repairer_engineer?->name ?? 'لم يتم التكليف' }}
+                    عدد الملحوظات: {{ $record->notes()->count() }}
                 </li>
-                <hr style="margin: 20px 0">
-                {!! $record->description ?? 'لا يوجد' !!}
             </ul>
         @endif
     </x-filament::section>
 
     <x-filament::section>
         <x-slot name="heading">
-            العمليات
+            ملاحظات الشكوى
         </x-slot>
 
         {{ $this->table }}

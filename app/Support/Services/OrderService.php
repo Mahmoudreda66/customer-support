@@ -55,6 +55,7 @@ class OrderService
                     ->options(OrderService::STATUSES),
                 RichEditor::make('description')
                     ->label('وصف العملية')
+                    ->fileAttachmentsDirectory('orders/logs')
                     ->string(),
             ])
             ->action(function (array $data, Order $order) {

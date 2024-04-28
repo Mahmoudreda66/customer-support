@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Customer;
+use App\Models\MachineModel;
 use App\Models\MachineType;
 use App\Models\Order;
 use App\Support\Services\OrderService;
@@ -54,24 +55,26 @@ class OrderResource extends Resource
                 Forms\Components\Fieldset::make('بيانات الماكينة')
                     ->schema([
                         Forms\Components\Grid::make(3)
-                        ->schema([
-                            Forms\Components\Select::make('machine_type_id')
-                                ->searchable()
-                                ->nullable()
-                                ->relationship('machineType', 'name')
-                                ->preload()
-                                ->label('نوع الماكينة'),
-                            Forms\Components\TextInput::make('serial_number')
-                                ->nullable()
-                                ->string()
-                                ->maxLength('191')
-                                ->label('سيريال الماكينة'),
-                            Forms\Components\TextInput::make('machine_model')
-                                ->nullable()
-                                ->string()
-                                ->maxLength('191')
-                                ->label('موديل الماكينة'),
-                        ])
+                            ->schema([
+                                Forms\Components\Select::make('machine_type_id')
+                                    ->searchable()
+                                    ->nullable()
+                                    ->relationship('machineType', 'name')
+                                    ->preload()
+                                    ->live()
+                                    ->label('نوع الماكينة'),
+                                Forms\Components\Select::make('machine_model_id')
+                                    ->searchable()
+                                    ->options(fn(Forms\Get $get) => MachineModel::query()->where('machine_type_id', $get('machine_type_id'))->pluck('model', 'id'))
+                                    ->nullable()
+                                    ->preload()
+                                    ->label('موديل الماكينة'),
+                                Forms\Components\TextInput::make('serial_number')
+                                    ->nullable()
+                                    ->string()
+                                    ->maxLength('191')
+                                    ->label('سيريال الماكينة'),
+                            ])
                     ]),
                 Forms\Components\DateTimePicker::make('deadline')
                     ->label('وقت الانتهاء الأقصى / Deadline'),
@@ -91,6 +94,7 @@ class OrderResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('serial_number')
+                    ->placeholder('غير معروف')
                     ->label('سيريال')
                     ->searchable()
                     ->sortable(),

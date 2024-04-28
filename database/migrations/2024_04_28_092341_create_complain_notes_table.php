@@ -10,20 +10,21 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->string('serial_number')
-                ->nullable()
-                ->change();
-            $table->foreignIdFor(\App\Models\MachineType::class)
+        Schema::create('complain_notes', function (Blueprint $table) {
+            $table->id();
+            $table->foreignIdFor(\App\Models\Complain::class)
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->foreignIdFor(\App\Models\User::class)
                 ->nullable()
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->nullOnDelete();
-            $table->foreignIdFor(\App\Models\MachineModel::class)
-                ->nullable()
-                ->constrained()
-                ->cascadeOnUpdate()
-                ->nullOnDelete();
+            $table->text('complain');
+            $table->text('solution');
+            $table->enum('type', ['open', 'closed']);
+            $table->timestamps();
         });
     }
 
@@ -32,8 +33,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('complain_notes');
     }
 };

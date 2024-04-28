@@ -4,16 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class MachineType extends Model
+class MachineModel extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
 
-    public function models(): HasMany
+    public function machineType(): BelongsTo
     {
-        return $this->hasMany(MachineModel::class);
+        return $this->belongsTo(MachineType::class);
     }
 }

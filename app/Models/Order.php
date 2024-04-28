@@ -43,6 +43,11 @@ class Order extends Model
         return $this->belongsTo(MachineType::class);
     }
 
+    public function machineModel(): BelongsTo
+    {
+        return $this->belongsTo(MachineModel::class);
+    }
+
     public function getRepairerEngineerAttribute() // the engineer that received the machine
     {
         return $this->logs()

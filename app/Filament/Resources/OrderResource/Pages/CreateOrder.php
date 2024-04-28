@@ -5,6 +5,7 @@ namespace App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource;
 use App\Models\Order;
 use App\Models\SystemLog;
+use Exception;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -37,7 +38,8 @@ class CreateOrder extends CreateRecord
             DB::commit();
 
             return $order;
-        } catch (\Exception) {
+        } catch (Exception $e) {
+            dd($e);
             DB::rollBack();
             abort(500);
         }
