@@ -28,6 +28,15 @@ class OrderService
         'refactor' => 'مرتجع للصيانة',
     ];
 
+    public static function statusesByRole(string $role): array
+    {
+        return match ($role) {
+            'maintenance' => ['working' => 'جاري العمل', 'pending' => 'طلب مُعلق', 'finished' => 'إنتهت الصيانة'],
+            'data_entry' => ['refactor' => 'مرتجع للصيانة', 'handed' => 'تم التسليم', 'cancelled' => 'تم الإلغاء', 'called' => 'تم الاتصال'],
+            default => self::STATUSES,
+        };
+    }
+
     public static function colors($state): string
     {
         return match ($state) {
@@ -57,7 +66,7 @@ class OrderService
                     ->notIn(fn(Order $order) => [$order->status])
                     ->default(fn(Order $order) => $order->status)
                     ->live()
-                    ->options(OrderService::STATUSES),
+                    ->options(OrderService::statusesByRole(auth()->user()->role)),
                 RichEditor::make('description')
                     ->required(fn(Get $get) => in_array($get('status'), ['pending', 'finished', 'refactor', 'cancelled', 'called']))
                     ->label('وصف العملية')

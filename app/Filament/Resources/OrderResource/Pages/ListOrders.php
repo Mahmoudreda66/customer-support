@@ -16,9 +16,13 @@ class ListOrders extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            Actions\CreateAction::make(),
-        ];
+        $actions = [];
+
+        if (auth()->user()->role != 'maintenance') {
+            $actions[] = Actions\CreateAction::make();
+        }
+
+        return $actions;
     }
 
     public function getTabs(): array

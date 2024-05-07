@@ -83,18 +83,39 @@ class OrderResource extends Resource
      */
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('#')
-                    ->searchable()
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('serial_number')
-                    ->placeholder('غير معروف')
-                    ->label('سيريال')
-                    ->searchable()
-                    ->sortable(),
+        $columns = [
+            Tables\Columns\TextColumn::make('id')
+                ->label('#')
+                ->searchable()
+                ->numeric()
+                ->sortable(),
+            Tables\Columns\TextColumn::make('serial_number')
+                ->placeholder('غير معروف')
+                ->label('سيريال')
+                ->searchable()
+                ->sortable(),
+            Tables\Columns\TextColumn::make('repairer_name')
+                ->state(fn(Order $order) => $order->repairer_engineer?->name)
+                ->placeholder('لم يتم الاستلام')
+                ->label('موظف الصيانة'),
+            Tables\Columns\TextColumn::make('created_at')
+                ->label('تاريخ الإنشاء')
+                ->dateTime()
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+            Tables\Columns\TextColumn::make('status')
+                ->badge()
+                ->formatStateUsing(fn(Order $order) => OrderService::STATUSES[$order->status])
+                ->color(fn(string $state): string => OrderService::colors($state))
+                ->label('الحالة'),
+            Tables\Columns\TextColumn::make('deadline')
+                ->state(fn(Order $order) => $order->deadline ? $order->deadline->format('Y-m-d h:i A') : 'لا يوجد')
+                ->label('وقت الانتهاء')
+                ->sortable(),
+        ];
+
+        if (auth()->user()->role != 'maintenance') {
+            $columns[] = [
                 Tables\Columns\TextColumn::make('customer.name')
                     ->label('العميل')
                     ->searchable()
@@ -104,30 +125,16 @@ class OrderResource extends Resource
                     ->label('الفرع')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->badge()
-                    ->formatStateUsing(fn(Order $order) => OrderService::STATUSES[$order->status])
-                    ->color(fn(string $state): string => OrderService::colors($state))
-                    ->label('الحالة'),
-                Tables\Columns\TextColumn::make('deadline')
-                    ->state(fn(Order $order) => $order->deadline ? $order->deadline->format('Y-m-d h:i A') : 'لا يوجد')
-                    ->label('وقت الانتهاء')
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->state(fn(Order $order) => $order->user?->name ?? 'غير معروف')
                     ->label('مٌنشئ الطلب')
                     ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('repairer_name')
-                    ->state(fn(Order $order) => $order->repairer_engineer?->name)
-                    ->placeholder('لم يتم الاستلام')
-                    ->label('موظف الصيانة'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('تاريخ الإنشاء')
-                    ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
+            ];
+        }
+
+        $tableData = $table
+            ->columns($columns)
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->label('الحالة')
@@ -154,15 +161,24 @@ class OrderResource extends Resource
             ])
             ->actions([
                 OrderService::changeStatusAction(),
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
+
+        if (auth()->user()->role != 'maintenance') {
+            $tableData
+                ->actions([
+                    OrderService::changeStatusAction(),
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ])
+                ->bulkActions([
+                    Tables\Actions\BulkActionGroup::make([
+                        Tables\Actions\DeleteBulkAction::make(),
+                    ]),
+                ]);
+        }
+
+        return $tableData;
     }
 
     public static function getRelations(): array
