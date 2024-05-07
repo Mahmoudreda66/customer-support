@@ -5,8 +5,12 @@ namespace App\Support\Services;
 use App\Models\Order;
 use App\Models\SystemLog;
 use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 use Mockery\Exception;
@@ -50,19 +54,59 @@ class OrderService
                 Select::make('status')
                     ->label('حالة الطلب')
                     ->required()
-                    ->notIn(fn (Order $order) => [$order->status])
-                    ->default(fn (Order $order) => $order->status)
+                    ->notIn(fn(Order $order) => [$order->status])
+                    ->default(fn(Order $order) => $order->status)
+                    ->live()
                     ->options(OrderService::STATUSES),
                 RichEditor::make('description')
+                    ->required(fn(Get $get) => in_array($get('status'), ['pending', 'finished', 'refactor', 'cancelled', 'called']))
                     ->label('وصف العملية')
                     ->fileAttachmentsDirectory('orders/logs')
                     ->string(),
+                Grid::make(3)
+                    ->schema([
+                        TextInput::make('serial_number')
+                            ->required()
+                            ->string()
+                            ->maxLength('191')
+                            ->label('سيريال الماكينة'),
+                        FileUpload::make('image_before')
+                            ->image()
+                            ->directory('orders/tests-images')
+                            ->disk('public')
+                            ->label('تست الماكينة قبل الصيانة')
+                            ->maxSize(3 * 1024),
+                        FileUpload::make('image_after')
+                            ->required()
+                            ->label('تست الماكينة بعد الصيانة')
+                            ->image()
+                            ->directory('orders/tests-images')
+                            ->disk('public')
+                            ->maxSize(3 * 1024)
+                    ])
+                    ->visible(fn(Get $get) => $get('status') === 'finished')
             ])
             ->action(function (array $data, Order $order) {
                 try {
+                    $orderData = [
+                        'status' => $data['status']
+                    ];
+
+                    if (!empty($data['serial_number'])) {
+                        $orderData['serial_number'] = $data['serial_number'];
+                    }
+
+                    if (!empty($data['image_after'])) {
+                        $orderData['image_after'] = $data['image_after'];
+                    }
+
+                    if (!empty($data['image_before'])) {
+                        $orderData['image_before'] = $data['image_before'];
+                    }
+
                     DB::beginTransaction();
 
-                    $order->update(['status' => $data['status']]);
+                    $order->update($orderData);
 
                     SystemLog::query()->create([
                         'user_id' => auth()->id(),

@@ -83,6 +83,49 @@
 
     <x-filament::section>
         <x-slot name="heading">
+            تست الصيانة
+        </x-slot>
+
+        <div style="display: flex; width: 100%">
+            <div style="width: 50%; margin-left: 20px">
+                <x-filament::fieldset>
+                    <x-slot name="label">
+                        قبل الصيانة
+                    </x-slot>
+
+                    @if($image_before = $record->image_before)
+                    <a href="{{ asset('storage/' . $image_before) }}" target="_blank">
+                        <img src="{{ asset('storage/' . $image_before) }}" alt="تست قبل الصيانة">
+                    </a>
+                    @else
+                        <div style="text-align: center">
+                            لا توجد صور حتى الآن
+                        </div>
+                    @endif
+                </x-filament::fieldset>
+            </div>
+            <div style="width: 50%">
+                <x-filament::fieldset>
+                    <x-slot name="label">
+                        بعد الصيانة
+                    </x-slot>
+
+                    @if($image_after = $record->image_after)
+                        <a href="{{ asset('storage/' . $image_after) }}" target="_blank">
+                            <img src="{{ asset('storage/' . $image_after) }}" alt="تست بعد الصيانة">
+                        </a>
+                    @else
+                        <div style="text-align: center">
+                            لا توجد صور حتى الآن
+                        </div>
+                    @endif
+                </x-filament::fieldset>
+            </div>
+        </div>
+    </x-filament::section>
+
+    <x-filament::section>
+        <x-slot name="heading">
             العمليات
         </x-slot>
 

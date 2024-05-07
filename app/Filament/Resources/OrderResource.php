@@ -54,26 +54,23 @@ class OrderResource extends Resource
                     ->columnSpanFull(),
                 Forms\Components\Fieldset::make('بيانات الماكينة')
                     ->schema([
-                        Forms\Components\Grid::make(3)
+                        Forms\Components\Grid::make(2)
                             ->schema([
                                 Forms\Components\Select::make('machine_type_id')
                                     ->searchable()
                                     ->nullable()
                                     ->relationship('machineType', 'name')
                                     ->preload()
+                                    ->required()
                                     ->live()
                                     ->label('نوع الماكينة'),
                                 Forms\Components\Select::make('machine_model_id')
                                     ->searchable()
                                     ->options(fn(Forms\Get $get) => MachineModel::query()->where('machine_type_id', $get('machine_type_id'))->pluck('model', 'id'))
                                     ->nullable()
+                                    ->required()
                                     ->preload()
-                                    ->label('موديل الماكينة'),
-                                Forms\Components\TextInput::make('serial_number')
-                                    ->nullable()
-                                    ->string()
-                                    ->maxLength('191')
-                                    ->label('سيريال الماكينة'),
+                                    ->label('موديل الماكينة')
                             ])
                     ]),
                 Forms\Components\DateTimePicker::make('deadline')

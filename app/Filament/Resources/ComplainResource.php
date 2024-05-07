@@ -49,8 +49,8 @@ class ComplainResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('machine_model_id')
                             ->searchable()
+                            ->required()
                             ->options(fn(Forms\Get $get) => MachineModel::query()->where('machine_type_id', $get('machine_type_id'))->pluck('model', 'id'))
-                            ->nullable()
                             ->preload()
                             ->label('موديل الماكينة'),
                     ]),
