@@ -115,7 +115,8 @@ class OrderResource extends Resource
         ];
 
         if (auth()->user()->role != 'maintenance') {
-            $columns[] = [
+            array_push(
+                $columns,
                 Tables\Columns\TextColumn::make('customer.name')
                     ->label('العميل')
                     ->searchable()
@@ -130,7 +131,7 @@ class OrderResource extends Resource
                     ->label('مٌنشئ الطلب')
                     ->numeric()
                     ->sortable()
-            ];
+            );
         }
 
         $tableData = $table
