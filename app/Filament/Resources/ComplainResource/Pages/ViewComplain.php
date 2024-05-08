@@ -3,19 +3,13 @@
 namespace App\Filament\Resources\ComplainResource\Pages;
 
 use App\Filament\Resources\ComplainResource;
-use App\Filament\Resources\OrderResource;
 use App\Models\Complain;
 use App\Models\ComplainNote;
-use App\Models\Order;
 use App\Support\Services\ComplainService;
-use App\Support\Services\OrderService;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -40,7 +34,7 @@ class ViewComplain extends Page implements HasTable
 
     public function getTitle(): string|Htmlable
     {
-        return 'عرض الشكوى #' . $this->record->id;
+        return 'عرض الشكوى #'.$this->record->id;
     }
 
     public function table(Table $table): Table
@@ -55,8 +49,8 @@ class ViewComplain extends Page implements HasTable
                     ->label('تاريخ الإنشاء'),
                 TextColumn::make('type')
                     ->badge()
-                    ->color(fn(ComplainNote $note) => ['open' => 'success', 'closed' => 'danger'][$note->type])
-                    ->formatStateUsing(fn(ComplainNote $note) => $note->type === 'open' ? 'مفتوحة' : 'تم الإغلاق')
+                    ->color(fn (ComplainNote $note) => ['open' => 'success', 'closed' => 'danger'][$note->type])
+                    ->formatStateUsing(fn (ComplainNote $note) => $note->type === 'open' ? 'مفتوحة' : 'تم الإغلاق')
                     ->label('الحالة'),
             ])->actions([
                 ViewAction::make()

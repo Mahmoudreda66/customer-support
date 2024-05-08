@@ -29,12 +29,12 @@ class ListOrders extends ListRecords
     {
         $tabs = [
             Tab::make('جميع الطلبات')
-                ->badge(Order::query()->count())
+                ->badge(Order::query()->count()),
         ];
 
         foreach (Branch::query()->get() as $branch) {
             $tabs[] = Tab::make($branch->name)
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('branch_id', $branch->id))
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('branch_id', $branch->id))
                 ->badge(Order::query()->where('branch_id', $branch->id)->count());
         }
 

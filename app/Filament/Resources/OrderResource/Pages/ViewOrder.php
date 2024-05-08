@@ -40,7 +40,7 @@ class ViewOrder extends Page implements HasTable
 
     public function getTitle(): string|Htmlable
     {
-        return 'عرض الطلب #' . $this->record->id;
+        return 'عرض الطلب #'.$this->record->id;
     }
 
     public function table(Table $table): Table
@@ -48,7 +48,7 @@ class ViewOrder extends Page implements HasTable
         return $table
             ->query(
                 SystemLog::query()
-                    ->whereHas('orders', fn(Builder $builder) => $builder->where('orders.id', $this->record->id))
+                    ->whereHas('orders', fn (Builder $builder) => $builder->where('orders.id', $this->record->id))
                     ->latest()
             )
             ->paginated(false)
@@ -57,15 +57,15 @@ class ViewOrder extends Page implements HasTable
                 TextColumn::make('user.name')
                     ->label('تم بواسطة'),
                 TextColumn::make('user.role')
-                    ->formatStateUsing(fn(User $user) => $user->role ? UserService::JOBS[$user->role] : 'موظف عام')
+                    ->formatStateUsing(fn (User $user) => $user->role ? UserService::JOBS[$user->role] : 'موظف عام')
                     ->label('نوع الموظف'),
                 TextColumn::make('user.branch.name')
                     ->placeholder('موظف عام')
                     ->label('فرع الموظف'),
                 TextColumn::make('data.status')
-                    ->formatStateUsing(fn($record) => OrderService::STATUSES[$record->data['status']])
+                    ->formatStateUsing(fn ($record) => OrderService::STATUSES[$record->data['status']])
                     ->badge()
-                    ->color(fn(string $state): string => OrderService::colors($state))
+                    ->color(fn (string $state): string => OrderService::colors($state))
                     ->label('حالة الطلب'),
                 TextColumn::make('data.description')
                     ->limit(50)

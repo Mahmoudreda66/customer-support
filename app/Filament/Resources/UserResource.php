@@ -72,7 +72,7 @@ class UserResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('role')
-                    ->formatStateUsing(fn(User $user) => UserService::JOBS[$user->role])
+                    ->formatStateUsing(fn (User $user) => UserService::JOBS[$user->role])
                     ->label('الوظيفة')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -107,5 +107,10 @@ class UserResource extends Resource
         return [
             'index' => Pages\ManageUsers::route('/'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->role === 'manager';
     }
 }

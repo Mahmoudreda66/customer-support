@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MachineModelResource\Pages;
-use App\Filament\Resources\MachineModelResource\RelationManagers;
 use App\Models\MachineModel;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MachineModelResource extends Resource
 {
@@ -84,5 +81,10 @@ class MachineModelResource extends Resource
         return [
             'index' => Pages\ManageMachineModels::route('/'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->role === 'manager';
     }
 }

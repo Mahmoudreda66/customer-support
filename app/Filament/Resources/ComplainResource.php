@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ComplainResource\Pages;
-use App\Filament\Resources\ComplainResource\RelationManagers;
 use App\Models\Complain;
 use App\Models\MachineModel;
 use App\Support\Services\ComplainService;
@@ -12,8 +11,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ComplainResource extends Resource
 {
@@ -50,7 +47,7 @@ class ComplainResource extends Resource
                         Forms\Components\Select::make('machine_model_id')
                             ->searchable()
                             ->required()
-                            ->options(fn(Forms\Get $get) => MachineModel::query()->where('machine_type_id', $get('machine_type_id'))->pluck('model', 'id'))
+                            ->options(fn (Forms\Get $get) => MachineModel::query()->where('machine_type_id', $get('machine_type_id'))->pluck('model', 'id'))
                             ->preload()
                             ->label('موديل الماكينة'),
                     ]),
@@ -63,7 +60,7 @@ class ComplainResource extends Resource
                         Forms\Components\RichEditor::make('solution')
                             ->label('الحل')
                             ->required(),
-                    ])
+                    ]),
             ]);
     }
 
@@ -86,8 +83,8 @@ class ComplainResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('type')
                     ->badge()
-                    ->color(fn(Complain $complain) => ['open' => 'success', 'closed' => 'danger'][$complain->type])
-                    ->formatStateUsing(fn(Complain $complain) => $complain->type === 'open' ? 'مفتوحة' : 'تم الإغلاق')
+                    ->color(fn (Complain $complain) => ['open' => 'success', 'closed' => 'danger'][$complain->type])
+                    ->formatStateUsing(fn (Complain $complain) => $complain->type === 'open' ? 'مفتوحة' : 'تم الإغلاق')
                     ->label('حالة الشكوى'),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('المستخدم')
@@ -106,7 +103,7 @@ class ComplainResource extends Resource
                     ->options([
                         'open' => 'مفتوحة',
                         'closed' => 'تم الإغلاق',
-                    ])
+                    ]),
             ])
             ->actions([
                 ComplainService::addNoteAction(),
@@ -136,5 +133,10 @@ class ComplainResource extends Resource
             'view' => Pages\ViewComplain::route('/{record}'),
             'edit' => Pages\EditComplain::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->role === 'manager';
     }
 }

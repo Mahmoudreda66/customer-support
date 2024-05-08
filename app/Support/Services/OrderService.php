@@ -2,6 +2,7 @@
 
 namespace App\Support\Services;
 
+use App\Events\OrderStatusChangedEvent;
 use App\Models\Order;
 use App\Models\SystemLog;
 use Filament\Actions\Action;
@@ -63,12 +64,12 @@ class OrderService
                 Select::make('status')
                     ->label('حالة الطلب')
                     ->required()
-                    ->notIn(fn(Order $order) => [$order->status])
-                    ->default(fn(Order $order) => $order->status)
+                    ->notIn(fn (Order $order) => [$order->status])
+                    ->default(fn (Order $order) => $order->status)
                     ->live()
                     ->options(OrderService::statusesByRole(auth()->user()->role)),
                 RichEditor::make('description')
-                    ->required(fn(Get $get) => in_array($get('status'), ['pending', 'finished', 'refactor', 'cancelled', 'called']))
+                    ->required(fn (Get $get) => in_array($get('status'), ['pending', 'finished', 'refactor', 'cancelled', 'called']))
                     ->label('وصف العملية')
                     ->fileAttachmentsDirectory('orders/logs')
                     ->string(),
@@ -91,25 +92,25 @@ class OrderService
                             ->image()
                             ->directory('orders/tests-images')
                             ->disk('public')
-                            ->maxSize(3 * 1024)
+                            ->maxSize(3 * 1024),
                     ])
-                    ->visible(fn(Get $get) => $get('status') === 'finished')
+                    ->visible(fn (Get $get) => $get('status') === 'finished'),
             ])
             ->action(function (array $data, Order $order) {
                 try {
                     $orderData = [
-                        'status' => $data['status']
+                        'status' => $data['status'],
                     ];
 
-                    if (!empty($data['serial_number'])) {
+                    if (! empty($data['serial_number'])) {
                         $orderData['serial_number'] = $data['serial_number'];
                     }
 
-                    if (!empty($data['image_after'])) {
+                    if (! empty($data['image_after'])) {
                         $orderData['image_after'] = $data['image_after'];
                     }
 
-                    if (!empty($data['image_before'])) {
+                    if (! empty($data['image_before'])) {
                         $orderData['image_before'] = $data['image_before'];
                     }
 
@@ -123,6 +124,8 @@ class OrderService
                         'to_id' => $order->id,
                         'data' => ['status' => $data['status'], 'description' => $data['description']],
                     ]);
+
+                    event(new OrderStatusChangedEvent($data['status'], $order, $data['description']));
 
                     DB::commit();
 

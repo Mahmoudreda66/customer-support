@@ -53,6 +53,7 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->profile(Pages\Auth\EditProfile::class, isSimple: false)
             ->font('Cairo', provider: GoogleFontProvider::class);
     }
 }

@@ -6,7 +6,6 @@ use App\Models\Order;
 use App\Support\Services\OrderService;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Database\Eloquent\Collection;
 
 class TasksStatuses extends BaseWidget
 {

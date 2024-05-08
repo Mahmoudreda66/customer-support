@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Customer;
 use App\Models\MachineModel;
-use App\Models\MachineType;
 use App\Models\Order;
 use App\Support\Services\OrderService;
 use Exception;
@@ -66,12 +65,12 @@ class OrderResource extends Resource
                                     ->label('نوع الماكينة'),
                                 Forms\Components\Select::make('machine_model_id')
                                     ->searchable()
-                                    ->options(fn(Forms\Get $get) => MachineModel::query()->where('machine_type_id', $get('machine_type_id'))->pluck('model', 'id'))
+                                    ->options(fn (Forms\Get $get) => MachineModel::query()->where('machine_type_id', $get('machine_type_id'))->pluck('model', 'id'))
                                     ->nullable()
                                     ->required()
                                     ->preload()
-                                    ->label('موديل الماكينة')
-                            ])
+                                    ->label('موديل الماكينة'),
+                            ]),
                     ]),
                 Forms\Components\DateTimePicker::make('deadline')
                     ->label('وقت الانتهاء الأقصى / Deadline'),
@@ -95,7 +94,7 @@ class OrderResource extends Resource
                 ->searchable()
                 ->sortable(),
             Tables\Columns\TextColumn::make('repairer_name')
-                ->state(fn(Order $order) => $order->repairer_engineer?->name)
+                ->state(fn (Order $order) => $order->repairer_engineer?->name)
                 ->placeholder('لم يتم الاستلام')
                 ->label('موظف الصيانة'),
             Tables\Columns\TextColumn::make('created_at')
@@ -105,11 +104,11 @@ class OrderResource extends Resource
                 ->toggleable(isToggledHiddenByDefault: true),
             Tables\Columns\TextColumn::make('status')
                 ->badge()
-                ->formatStateUsing(fn(Order $order) => OrderService::STATUSES[$order->status])
-                ->color(fn(string $state): string => OrderService::colors($state))
+                ->formatStateUsing(fn (Order $order) => OrderService::STATUSES[$order->status])
+                ->color(fn (string $state): string => OrderService::colors($state))
                 ->label('الحالة'),
             Tables\Columns\TextColumn::make('deadline')
-                ->state(fn(Order $order) => $order->deadline ? $order->deadline->format('Y-m-d h:i A') : 'لا يوجد')
+                ->state(fn (Order $order) => $order->deadline ? $order->deadline->format('Y-m-d h:i A') : 'لا يوجد')
                 ->label('وقت الانتهاء')
                 ->sortable(),
         ];
@@ -127,7 +126,7 @@ class OrderResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->state(fn(Order $order) => $order->user?->name ?? 'غير معروف')
+                    ->state(fn (Order $order) => $order->user?->name ?? 'غير معروف')
                     ->label('مٌنشئ الطلب')
                     ->numeric()
                     ->sortable()
@@ -152,11 +151,11 @@ class OrderResource extends Resource
                         return $query
                             ->when(
                                 $data['from'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
                             )
                             ->when(
                                 $data['to'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
                     }),
             ])

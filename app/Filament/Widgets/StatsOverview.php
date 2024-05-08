@@ -18,12 +18,12 @@ class StatsOverview extends BaseWidget
 
         return [
             Stat::make('عدد العملاء', Customer::query()->count())
-                ->description($statistics['today_customers'] . ' عميل جديد اليوم')
-                ->descriptionIcon('heroicon-m-arrow-trending-' . ($statistics['today_customers'] ? 'up' : 'down'))
+                ->description($statistics['today_customers'].' عميل جديد اليوم')
+                ->descriptionIcon('heroicon-m-arrow-trending-'.($statistics['today_customers'] ? 'up' : 'down'))
                 ->color($statistics['today_customers'] ? 'success' : 'danger'),
             Stat::make('عدد الطلبات', Order::query()->count())
-                ->description($statistics['today_orders'] . ' طلب جديد اليوم')
-                ->descriptionIcon('heroicon-m-arrow-trending-' . ($statistics['today_orders'] ? 'up' : 'down'))
+                ->description($statistics['today_orders'].' طلب جديد اليوم')
+                ->descriptionIcon('heroicon-m-arrow-trending-'.($statistics['today_orders'] ? 'up' : 'down'))
                 ->color($statistics['today_orders'] ? 'success' : 'danger'),
             Stat::make('عدد الفروع', Branch::query()->count())
                 ->description('عدد جميع الفروع')
@@ -37,7 +37,7 @@ class StatsOverview extends BaseWidget
         return [
             'today_customers' => Customer::query()->whereDate('created_at', date('Y-m-d'))->count(),
             'today_orders' => Order::query()->whereDate('created_at', date('Y-m-d'))->count(),
-            'branches_count' => Branch::query()->count()
+            'branches_count' => Branch::query()->count(),
         ];
     }
 }

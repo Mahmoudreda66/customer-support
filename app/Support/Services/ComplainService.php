@@ -45,8 +45,8 @@ class ComplainService
                 Select::make('type')
                     ->label('حالة الشكوى')
                     ->options(ComplainService::TYPES)
-                    ->default(fn(Complain $complain) => $complain->type)
-                    ->required()
+                    ->default(fn (Complain $complain) => $complain->type)
+                    ->required(),
             ])
             ->action(function (array $data, Complain $complain) {
                 $complain->notes()->create(array_merge($data, ['user_id' => auth()->id()]));

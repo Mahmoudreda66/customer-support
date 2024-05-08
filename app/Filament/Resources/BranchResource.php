@@ -71,4 +71,9 @@ class BranchResource extends Resource
             'index' => Pages\ManageBranches::route('/'),
         ];
     }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->role === 'manager';
+    }
 }

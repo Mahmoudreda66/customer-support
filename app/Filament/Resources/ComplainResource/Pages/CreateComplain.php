@@ -5,7 +5,6 @@ namespace App\Filament\Resources\ComplainResource\Pages;
 use App\Filament\Resources\ComplainResource;
 use App\Models\Complain;
 use Exception;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -32,7 +31,7 @@ class CreateComplain extends CreateRecord
                 'customer_id' => $data['customer_id'],
                 'machine_type_id' => $data['machine_type_id'],
                 'machine_model_id' => $data['machine_model_id'],
-                'type' => $data['type']
+                'type' => $data['type'],
             ]);
 
             $complain->notes()->create([

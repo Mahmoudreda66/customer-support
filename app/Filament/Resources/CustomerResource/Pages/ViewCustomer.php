@@ -6,13 +6,11 @@ use App\Filament\Resources\CustomerResource;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Support\Services\OrderService;
-use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -35,7 +33,7 @@ class ViewCustomer extends Page implements HasTable
 
     public function table(Table $table): Table
     {
-        return $table->query(Order::query()->whereHas('customer', fn($q) => $q->where('customer_id', $this->record->id))->latest())
+        return $table->query(Order::query()->whereHas('customer', fn ($q) => $q->where('customer_id', $this->record->id))->latest())
             ->pluralModelLabel('طلبات')
             ->columns([
                 TextColumn::make('branch.name')
@@ -44,15 +42,15 @@ class ViewCustomer extends Page implements HasTable
                     ->sortable(),
                 TextColumn::make('status')
                     ->badge()
-                    ->formatStateUsing(fn(Order $order) => OrderService::STATUSES[$order->status])
-                    ->color(fn(string $state): string => OrderService::colors($state))
+                    ->formatStateUsing(fn (Order $order) => OrderService::STATUSES[$order->status])
+                    ->color(fn (string $state): string => OrderService::colors($state))
                     ->label('الحالة'),
                 TextColumn::make('deadline')
-                    ->state(fn(Order $order) => $order->deadline ? $order->deadline->format('Y-m-d h:i A') : 'لا يوجد')
+                    ->state(fn (Order $order) => $order->deadline ? $order->deadline->format('Y-m-d h:i A') : 'لا يوجد')
                     ->label('وقت الانتهاء')
                     ->sortable(),
                 TextColumn::make('user.name')
-                    ->state(fn(Order $order) => $order->user?->name ?? 'غير معروف')
+                    ->state(fn (Order $order) => $order->user?->name ?? 'غير معروف')
                     ->label('مٌنشئ الطلب')
                     ->numeric()
                     ->sortable(),
@@ -64,7 +62,7 @@ class ViewCustomer extends Page implements HasTable
                 OrderService::changeStatusAction(),
                 Action::make('show-details')
                     ->url(
-                        fn(Order $order) => route('filament.admin.resources.orders.view', $order->id)
+                        fn (Order $order) => route('filament.admin.resources.orders.view', $order->id)
                     )
                     ->openUrlInNewTab()
                     ->label('عرض التفاصيل')
