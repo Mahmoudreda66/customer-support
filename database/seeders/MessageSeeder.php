@@ -27,7 +27,7 @@ class MessageSeeder extends Seeder
             ],
             [
                 'key' => 'finished',
-                'message' => "تم الإنتهاء من الماكينة\nرقم الطلب: [order_id]\nسيريال: [serial]"
+                'message' => "تم الإنتهاء من الماكينة \nرقم الطلب: [order_id]\nسيريال: [serial]"
             ],
             [
                 'key' => 'handed',
