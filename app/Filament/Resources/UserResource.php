@@ -34,10 +34,9 @@ class UserResource extends Resource
                     ->string()
                     ->required()
                     ->maxLength(191),
-                Forms\Components\TextInput::make('email')
-                    ->label('البريد الإلكتروني')
-                    ->unique('users', 'email', $form->getRecord())
-                    ->email()
+                Forms\Components\TextInput::make('username')
+                    ->label('اسم المستخدم')
+                    ->unique('users', 'username', $form->getRecord())
                     ->required()
                     ->maxLength(191),
                 Forms\Components\TextInput::make('password')
@@ -63,8 +62,8 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('اسم المستخدم')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
-                    ->label('البريد الإلكتروني')
+                Tables\Columns\TextColumn::make('username')
+                    ->label('اسم المستخدم')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('branch.name')
                     ->label('الفرع')

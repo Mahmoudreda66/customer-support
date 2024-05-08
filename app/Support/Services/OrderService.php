@@ -10,6 +10,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
@@ -69,10 +70,10 @@ class OrderService
                     ->default(fn(Order $order) => $order->status)
                     ->live()
                     ->options(OrderService::statusesByRole(auth()->user()->role)),
-                RichEditor::make('description')
+                Textarea::make('description')
                     ->required(fn(Get $get) => in_array($get('status'), ['pending', 'finished', 'refactor', 'cancelled', 'called']))
                     ->label('وصف العملية')
-                    ->fileAttachmentsDirectory('orders/logs')
+                    ->rows(8)
                     ->string(),
                 Grid::make(3)
                     ->schema([

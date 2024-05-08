@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\OrderResource\Pages;
 
+use App\Events\OrderStatusChangedEvent;
 use App\Filament\Resources\OrderResource;
 use App\Models\Order;
 use App\Models\SystemLog;
@@ -35,12 +36,14 @@ class CreateOrder extends CreateRecord
                 'to_model' => Order::class,
             ]);
 
+            event(new OrderStatusChangedEvent('created', $order));
+
             DB::commit();
 
             return $order;
         } catch (Exception $e) {
-            dd($e);
             DB::rollBack();
+
             abort(500);
         }
     }
