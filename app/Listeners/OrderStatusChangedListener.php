@@ -31,7 +31,7 @@ class OrderStatusChangedListener implements ShouldQueue
 
         SMS::send(
             $this->handleMessage($event->status, $event->order, $event->description),
-            $event->order->getRelation('customer')->getAttribute('phone')
+            $event->order->customer->phone
         );
     }
 

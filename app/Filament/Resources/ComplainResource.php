@@ -137,6 +137,6 @@ class ComplainResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->role === 'manager';
+        return in_array(auth()->user()->role, ['manager', 'data_entry', 'customer_support']);
     }
 }

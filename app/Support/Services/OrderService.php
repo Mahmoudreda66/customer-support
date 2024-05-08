@@ -34,6 +34,7 @@ class OrderService
         return match ($role) {
             'maintenance' => ['working' => 'جاري العمل', 'pending' => 'طلب مُعلق', 'finished' => 'إنتهت الصيانة'],
             'data_entry' => ['refactor' => 'مرتجع للصيانة', 'handed' => 'تم التسليم', 'cancelled' => 'تم الإلغاء', 'called' => 'تم الاتصال'],
+            'customer_support' => ['refactor' => 'مرتجع للصيانة', 'called' => 'تم الاتصال'],
             default => self::STATUSES,
         };
     }
@@ -90,6 +91,7 @@ class OrderService
                         FileUpload::make('image_after')
                             ->label('تست الماكينة بعد الصيانة')
                             ->image()
+                            ->required()
                             ->directory('orders/tests-images')
                             ->disk('public')
                             ->maxSize(3 * 1024),
