@@ -135,6 +135,7 @@ class OrderResource extends Resource
 
         $tableData = $table
             ->columns($columns)
+            ->defaultSort('id', 'DESC')
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->label('الحالة')

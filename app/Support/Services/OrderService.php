@@ -64,12 +64,12 @@ class OrderService
                 Select::make('status')
                     ->label('حالة الطلب')
                     ->required()
-                    ->notIn(fn (Order $order) => [$order->status])
-                    ->default(fn (Order $order) => $order->status)
+                    ->notIn(fn(Order $order) => [$order->status])
+                    ->default(fn(Order $order) => $order->status)
                     ->live()
                     ->options(OrderService::statusesByRole(auth()->user()->role)),
                 RichEditor::make('description')
-                    ->required(fn (Get $get) => in_array($get('status'), ['pending', 'finished', 'refactor', 'cancelled', 'called']))
+                    ->required(fn(Get $get) => in_array($get('status'), ['pending', 'finished', 'refactor', 'cancelled', 'called']))
                     ->label('وصف العملية')
                     ->fileAttachmentsDirectory('orders/logs')
                     ->string(),
@@ -77,6 +77,7 @@ class OrderService
                     ->schema([
                         TextInput::make('serial_number')
                             ->required()
+                            ->default(fn(Order $order) => $order->getAttribute('serial_number'))
                             ->string()
                             ->maxLength('191')
                             ->label('سيريال الماكينة'),
@@ -87,14 +88,13 @@ class OrderService
                             ->label('تست الماكينة قبل الصيانة')
                             ->maxSize(3 * 1024),
                         FileUpload::make('image_after')
-                            ->required()
                             ->label('تست الماكينة بعد الصيانة')
                             ->image()
                             ->directory('orders/tests-images')
                             ->disk('public')
                             ->maxSize(3 * 1024),
                     ])
-                    ->visible(fn (Get $get) => $get('status') === 'finished'),
+                    ->visible(fn(Get $get) => $get('status') === 'finished'),
             ])
             ->action(function (array $data, Order $order) {
                 try {
@@ -102,15 +102,15 @@ class OrderService
                         'status' => $data['status'],
                     ];
 
-                    if (! empty($data['serial_number'])) {
+                    if (!empty($data['serial_number'])) {
                         $orderData['serial_number'] = $data['serial_number'];
                     }
 
-                    if (! empty($data['image_after'])) {
+                    if (!empty($data['image_after'])) {
                         $orderData['image_after'] = $data['image_after'];
                     }
 
-                    if (! empty($data['image_before'])) {
+                    if (!empty($data['image_before'])) {
                         $orderData['image_before'] = $data['image_before'];
                     }
 
@@ -142,5 +142,16 @@ class OrderService
                         ->send();
                 }
             });
+    }
+
+    public function orderQueue(Order $order): int
+    {
+        return Order::query()->latest()
+            ->where([
+                ['id', '<', $order->getAttribute('id')],
+                ['branch_id', $order->getAttribute('branch_id')]
+            ])
+            ->whereIn('status', ['working', 'created'])
+            ->count();
     }
 }
