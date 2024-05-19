@@ -88,14 +88,14 @@ class OrderService
                             ->directory('orders/tests-images')
                             ->disk('public')
                             ->label('تست الماكينة قبل الصيانة')
-                            ->maxSize(3 * 1024),
+                            ->maxSize(8 * 1024),
                         FileUpload::make('image_after')
                             ->label('تست الماكينة بعد الصيانة')
                             ->image()
                             ->required()
                             ->directory('orders/tests-images')
                             ->disk('public')
-                            ->maxSize(3 * 1024),
+                            ->maxSize(8 * 1024),
                     ])
                     ->visible(fn(Get $get) => $get('status') === 'finished'),
             ])
