@@ -105,6 +105,9 @@ class ViewOrder extends Page implements HasTable
                 ->url(route('filament.admin.resources.orders.edit', $this->record->id))
                 ->icon('heroicon-o-pencil-square'),
             DeleteAction::make()
+                ->after(function () {
+                    return to_route('filament.admin.resources.orders.index');
+                })
                 ->icon('heroicon-o-trash'),
         ];
     }
