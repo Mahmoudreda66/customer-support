@@ -30,10 +30,12 @@ class OrderService
         'refactor' => 'مرتجع للصيانة',
     ];
 
+    const TYPES = ['maintenance' => 'صيانة', 'preparation' => 'تجهيز'];
+
     public static function statusesByRole(string $role): array
     {
         return match ($role) {
-            'maintenance' => ['working' => 'جاري العمل', 'pending' => 'طلب مُعلق', 'finished' => 'إنتهت الصيانة'],
+            'maintenance' => ['working' => 'جاري العمل', 'pending' => 'طلب مُعلق', 'finished' => 'إنتهت الصيانة', 'cancelled' => 'تم الإلغاء',],
             'data_entry' => ['refactor' => 'مرتجع للصيانة', 'handed' => 'تم التسليم', 'cancelled' => 'تم الإلغاء', 'called' => 'تم الاتصال'],
             'customer_support' => ['refactor' => 'مرتجع للصيانة', 'called' => 'تم الاتصال'],
             default => self::STATUSES,

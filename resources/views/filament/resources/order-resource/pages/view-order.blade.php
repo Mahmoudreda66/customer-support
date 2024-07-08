@@ -3,16 +3,18 @@
 
     <x-filament::tabs>
         <x-filament::tabs.item
-            :active="$activeTab === 'order'"
-            wire:click="$set('activeTab', 'order')">
+                :active="$activeTab === 'order'"
+                wire:click="$set('activeTab', 'order')">
             بيانات الطلب
         </x-filament::tabs.item>
 
-        <x-filament::tabs.item
-            :active="$activeTab === 'customer'"
-            wire:click="$set('activeTab', 'customer')">
-            بيانات العميل
-        </x-filament::tabs.item>
+        @if(in_array(auth()->user()->role, ['manager', 'data_entry', 'customer_support']))
+            <x-filament::tabs.item
+                    :active="$activeTab === 'customer'"
+                    wire:click="$set('activeTab', 'customer')">
+                بيانات العميل
+            </x-filament::tabs.item>
+        @endif
     </x-filament::tabs>
 
     <x-filament::section>
@@ -42,10 +44,10 @@
                 </li>
             </ul>
             <x-filament::button
-                outlined
-                icon="heroicon-o-user-circle"
-                :href="route('filament.admin.resources.customers.view', $record->customer_id)"
-                tag="a">
+                    outlined
+                    icon="heroicon-o-user-circle"
+                    :href="route('filament.admin.resources.customers.view', $record->customer_id)"
+                    tag="a">
                 عرض ملف العميل
             </x-filament::button>
         @else
@@ -59,6 +61,9 @@
                 </li>
                 <li class="mb-2">
                     الفرع: {{ $record->branch->name }}
+                </li>
+                <li class="mb-2">
+                    نوع الطلب: {{ OrderService::TYPES[$record->type] }}
                 </li>
                 <li class="mb-2">
                     وقت الإنتهاء المٌقدر: {{ $record->deadline ?? 'غير محدد' }}
@@ -94,9 +99,9 @@
                     </x-slot>
 
                     @if($image_before = $record->image_before)
-                    <a href="{{ asset('storage/' . $image_before) }}" target="_blank">
-                        <img src="{{ asset('storage/' . $image_before) }}" alt="تست قبل الصيانة">
-                    </a>
+                        <a href="{{ asset('storage/' . $image_before) }}" target="_blank">
+                            <img src="{{ asset('storage/' . $image_before) }}" alt="تست قبل الصيانة">
+                        </a>
                     @else
                         <div style="text-align: center">
                             لا توجد صور حتى الآن
@@ -121,6 +126,45 @@
                     @endif
                 </x-filament::fieldset>
             </div>
+        </div>
+    </x-filament::section>
+
+    <x-filament::section>
+        <x-slot name="heading">
+            ملحقات الماكينة
+        </x-slot>
+
+        <div style="display: flex; justify-content: space-between">
+            <label>
+                <x-filament::input.checkbox disabled :checked="$record->dorg === 1"/>
+                <span>
+                &nbsp; درج
+            </span>
+            </label>
+            <label>
+                <x-filament::input.checkbox disabled :checked="$record->ink === 1"/>
+                <span>
+                &nbsp; حبر
+            </span>
+            </label>
+            <label>
+                <x-filament::input.checkbox disabled :checked="$record->magnetic === 1"/>
+                <span>
+                &nbsp; مغناطيس
+            </span>
+            </label>
+            <label>
+                <x-filament::input.checkbox disabled :checked="$record->duplex === 1"/>
+                <span>
+                &nbsp; دوبلكس
+            </span>
+            </label>
+            <label>
+                <x-filament::input.checkbox disabled :checked="$record->shelf === 1"/>
+                <span>
+                &nbsp; رف
+            </span>
+            </label>
         </div>
     </x-filament::section>
 
