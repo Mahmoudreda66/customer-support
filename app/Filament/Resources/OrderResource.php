@@ -115,6 +115,11 @@ class OrderResource extends Resource
                 ->label('سيريال')
                 ->searchable()
                 ->sortable(),
+            Tables\Columns\TextColumn::make('machineModel.model')
+                ->placeholder('غير معروف')
+                ->label('موديل الماكينة')
+                ->searchable()
+                ->sortable(),
             Tables\Columns\TextColumn::make('repairer_name')
                 ->state(fn(Order $order) => $order->repairer_engineer?->name)
                 ->placeholder('لم يتم الاستلام')

@@ -12,6 +12,9 @@
                 رقم الهاتف: {{ $record->phone }}
             </li>
             <li class="mb-2">
+                رقم الواتساب: {{ $record->whatsapp ?? 'لا يوجد' }}
+            </li>
+            <li class="mb-2">
                 الفرع التابع: {{ $record->branch->name }}
             </li>
             <li class="mb-2">

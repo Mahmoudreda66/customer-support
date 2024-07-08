@@ -29,15 +29,22 @@ class CustomerResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('اسم العميل')
-                    ->required()
-                    ->maxLength(191),
-                Forms\Components\TextInput::make('phone')
-                    ->label('رقم الهاتف')
-                    ->tel()
-                    ->required()
-                    ->maxLength(15),
+                Forms\Components\Grid::make(3)
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('اسم العميل')
+                            ->required()
+                            ->maxLength(191),
+                        Forms\Components\TextInput::make('phone')
+                            ->label('رقم الهاتف')
+                            ->tel()
+                            ->required()
+                            ->maxLength(15),
+                        Forms\Components\TextInput::make('whatsapp')
+                            ->label('رقم الواتساب')
+                            ->tel()
+                            ->maxLength(15),
+                    ]),
                 Forms\Components\TextInput::make('address')
                     ->label('العنوان')
                     ->columnSpanFull()
@@ -70,10 +77,10 @@ class CustomerResource extends Resource
                     ->label('رقم الهاتف'),
                 Tables\Columns\TextColumn::make('address')
                     ->label('العنوان')
-                    ->formatStateUsing(fn (Customer $customer) => str($customer->address)->limit())
+                    ->formatStateUsing(fn(Customer $customer) => str($customer->address)->limit())
                     ->searchable(),
                 Tables\Columns\TextColumn::make('serial_number')
-                    ->state(fn (Customer $customer) => $customer->serial_number ?? 'لا يوجد')
+                    ->state(fn(Customer $customer) => $customer->serial_number ?? 'لا يوجد')
                     ->label('رقم السيريال')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('branch.name')
