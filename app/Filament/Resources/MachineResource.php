@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\MachineResource\Pages;
 use App\Filament\Resources\MachineResource\RelationManagers;
 use App\Filament\Resources\MachineResource\RelationManagers\OrdersRelationManager;
+use App\Models\Customer;
 use App\Models\Machine;
 use App\Models\MachineModel;
 use Filament\Forms;
@@ -39,6 +40,7 @@ class MachineResource extends Resource
                     ->maxLength(191),
                 Forms\Components\Select::make('customer_id')
                     ->relationship('customer', 'name')
+                    ->options(Customer::query()->pluck('name', 'id'))
                     ->label('العميل')
                     ->searchable()
                     ->preload()
