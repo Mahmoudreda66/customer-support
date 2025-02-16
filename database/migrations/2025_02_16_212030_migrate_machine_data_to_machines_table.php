@@ -23,14 +23,25 @@ class MigrateMachineDataToMachinesTable extends Migration
                 ->cascadeOnUpdate();
         });
 
-        foreach (Order::query()->where('serial_number', '<>', null)->get() as $order) {
-            $machine = Machine::query()->firstOrCreate([
-                'serial_number' => $order->getAttribute('serial_number')
-            ], [
-                'customer_id' => $order->customer_id,
-                'machine_type_id' => $order->machine_type_id,
-                'machine_model_id' => $order->machine_model_id,
-            ]);
+        Order::query()->where('serial_number', '0000000000')->update(['serial_number' => null]);
+
+        foreach (Order::query()->get() as $order) {
+            if ($order->serial_number) {
+                $machine = Machine::query()->firstOrCreate([
+                    'serial_number' => $order->getAttribute('serial_number'),
+                ], [
+                    'machine_type_id' => $order->machine_type_id,
+                    'machine_model_id' => $order->machine_model_id,
+                    'customer_id' => $order->customer_id,
+                ]);
+            } else {
+                $machine = Machine::query()->create([
+                    'serial_number' => $order->getAttribute('serial_number'),
+                    'machine_type_id' => $order->machine_type_id,
+                    'machine_model_id' => $order->machine_model_id,
+                    'customer_id' => $order->customer_id,
+                ]);
+            }
 
             $order->update([
                 'machine_id' => $machine->id

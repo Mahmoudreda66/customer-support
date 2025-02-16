@@ -14,7 +14,9 @@ return new class extends Migration
     {
         Schema::create('machines', function (Blueprint $table) {
             $table->id();
-            $table->string('serial_number')->unique();
+            $table->string('serial_number')
+                ->nullable()
+                ->unique();
             $table->foreignIdFor(Customer::class)
                 ->constrained()
                 ->cascadeOnDelete()

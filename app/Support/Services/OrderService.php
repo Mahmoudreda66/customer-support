@@ -107,10 +107,6 @@ class OrderService
                         'status' => $data['status'],
                     ];
 
-                    if (!empty($data['serial_number'])) {
-                        $orderData['serial_number'] = $data['serial_number'];
-                    }
-
                     if (!empty($data['image_after'])) {
                         $orderData['image_after'] = $data['image_after'];
                     }
@@ -122,6 +118,8 @@ class OrderService
                     DB::beginTransaction();
 
                     $order->update($orderData);
+
+                    $order->machine()->update(['serial_number' => $data['serial_number']]);
 
                     SystemLog::query()->create([
                         'user_id' => auth()->id(),
