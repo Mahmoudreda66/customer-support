@@ -40,6 +40,8 @@ class MachineResource extends Resource
                 Forms\Components\Select::make('customer_id')
                     ->relationship('customer', 'name')
                     ->label('العميل')
+                    ->searchable()
+                    ->preload()
                     ->required(),
                 Forms\Components\Select::make('machine_type_id')
                     ->searchable()
