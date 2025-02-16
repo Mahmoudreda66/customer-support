@@ -13,6 +13,7 @@ use Exception;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
@@ -39,9 +40,23 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('customer_id')
+                    ->label('العميل')
+                    ->searchable()
+                    ->preload()
+                    ->options(Customer::query()->pluck('name', 'id'))
+                    ->live()
+                    ->required(),
                 Forms\Components\Select::make('machine_id')
                     ->label('الماكينة')
-                    ->relationship('machine', 'serial_number')
+                    ->disabled(fn(Get $get) => !$get('customer_id'))
+                    ->relationship(
+                        'machine',
+                        'serial_number',
+                        fn(Get $get, Builder $query) => $query
+                        ->where('serial_number', '<>', null)
+                        ->when($get('customer_id'), fn ($q) => $q->where('customer_id', $get('customer_id')))
+                    )
                     ->searchable()
                     ->preload()
                     ->required()
