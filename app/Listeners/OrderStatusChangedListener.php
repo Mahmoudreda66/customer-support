@@ -31,7 +31,7 @@ class OrderStatusChangedListener implements ShouldQueue
 
         SMS::send(
             $this->handleMessage($event->status, $event->order, $event->description),
-            $event->order->customer->phone
+            $event->order->machine->customer->phone
         );
     }
 
@@ -46,7 +46,7 @@ class OrderStatusChangedListener implements ShouldQueue
             $message = str_replace('[message]', $description ?? '', $message);
 
         if (str_contains($message, '[serial]'))
-            $message = str_replace('[serial]', $order->getAttribute('serial_number'), $message);
+            $message = str_replace('[serial]', $order->machine->serial_number, $message);
 
         if (str_contains($message, '[machines_queue]'))
             $message = str_replace('[machines_queue]', (new OrderService())->orderQueue($order), $message);

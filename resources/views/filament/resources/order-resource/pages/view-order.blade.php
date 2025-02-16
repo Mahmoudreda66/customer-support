@@ -25,28 +25,28 @@
         @if($activeTab === 'customer')
             <ul class="mb-5">
                 <li class="mb-2">
-                    اسم العميل: {{ $record->customer->name }}
+                    اسم العميل: {{ $record->machine->customer->name }}
                 </li>
                 <li class="mb-2">
-                    رقم الهاتف: {{ $record->customer->phone }}
+                    رقم الهاتف: {{ $record->machine->customer->phone }}
                 </li>
                 <li class="mb-2">
-                    الفرع التابع: {{ $record->customer->branch->name }}
+                    الفرع التابع: {{ $record->machine->customer->branch->name }}
                 </li>
                 <li class="mb-2">
-                    سيريال العميل: {{ $record->customer->serial_number ?? 'لا يوجد' }}
+                    سيريال العميل: {{ $record->machine->customer->serial_number ?? 'لا يوجد' }}
                 </li>
                 <li class="mb-2">
-                    العنوان: {{ $record->customer->address }}
+                    العنوان: {{ $record->machine->customer->address }}
                 </li>
                 <li class="mb-2">
-                    الوصف: {{ $record->customer->description ?? 'لا يوجد' }}
+                    الوصف: {{ $record->machine->customer->description ?? 'لا يوجد' }}
                 </li>
             </ul>
             <x-filament::button
                     outlined
                     icon="heroicon-o-user-circle"
-                    :href="route('filament.admin.resources.customers.view', $record->customer_id)"
+                    :href="route('filament.admin.resources.customers.view', $record->machine->customer_id)"
                     tag="a">
                 عرض ملف العميل
             </x-filament::button>
@@ -69,13 +69,13 @@
                     وقت الإنتهاء المٌقدر: {{ $record->deadline ?? 'غير محدد' }}
                 </li>
                 <li class="mb-2">
-                    سيريال الماكينة: {{ $record->serial_number ?? 'غير معروف' }}
+                    سيريال الماكينة: {{ $record->machine->serial_number ?? 'غير معروف' }}
                 </li>
                 <li class="mb-2">
-                    نوع الماكينة: {{ $record->machineType?->name ?? 'غير معروف' }}
+                    نوع الماكينة: {{ $record->machine->machineType?->name ?? 'غير معروف' }}
                 </li>
                 <li class="mb-2">
-                    موديل الماكينة: {{ $record->machineModel?->model ?? 'غير معروف' }}
+                    موديل الماكينة: {{ $record->machine->machineModel?->model ?? 'غير معروف' }}
                 </li>
                 <li class="mb-2">
                     موظف الصيانة: {{ $record->repairer_engineer?->name ?? 'لم يتم التكليف' }}

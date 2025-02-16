@@ -16,15 +16,15 @@ class Order extends Model
     protected $casts = [
         'deadline' => 'datetime',
     ];
-
-    public function customer(): BelongsTo
-    {
-        return $this->belongsTo(Customer::class);
-    }
-
+    
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+   
+    public function machine(): BelongsTo
+    {
+        return $this->belongsTo(Machine::class);
     }
 
     public function branch(): BelongsTo
@@ -36,16 +36,6 @@ class Order extends Model
     {
         return $this->hasMany(SystemLog::class, 'to_id')
             ->where('to_model', self::class);
-    }
-
-    public function machineType(): BelongsTo
-    {
-        return $this->belongsTo(MachineType::class);
-    }
-
-    public function machineModel(): BelongsTo
-    {
-        return $this->belongsTo(MachineModel::class);
     }
 
     public function getRepairerEngineerAttribute() // the engineer that received the machine

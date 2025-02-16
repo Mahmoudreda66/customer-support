@@ -3,10 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CustomerResource\Pages;
+use App\Filament\Resources\CustomerResource\RelationManagers\MachinesRelationManager;
 use App\Models\Customer;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -106,6 +111,60 @@ class CustomerResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist->schema([
+            Section::make("بيانات العميل")
+                ->schema([
+                    TextEntry::make("name")
+                        ->icon('heroicon-o-user')
+                        ->iconColor(Color::Cyan)
+                        ->label("اسم العميل"),
+                    TextEntry::make("phone")
+                        ->icon('heroicon-o-phone')
+                        ->iconColor(Color::Yellow)
+                        ->label("رقم الهاتف"),
+                    TextEntry::make("whatsapp")
+                        ->icon('heroicon-o-device-phone-mobile')
+                        ->iconColor(Color::Green)
+                        ->label("رقم الهاتف"),
+                    TextEntry::make("address")
+                        ->icon('heroicon-o-map')
+                        ->iconColor(Color::Pink)
+                        ->label("العنوان"),
+                    TextEntry::make("serial_number")
+                        ->icon('heroicon-o-hashtag')
+                        ->iconColor(Color::Blue)
+                        ->label("رقم السيريال")
+                        ->default('لا يوجد'),
+                    TextEntry::make("branch.name")
+                        ->icon('heroicon-o-tag')
+                        ->iconColor(Color::Gray)
+                        ->label("الفرع"),
+                    TextEntry::make("orders_count")
+                        ->icon('heroicon-o-numbered-list')
+                        ->default(fn(Customer $customer) => $customer->machines()->count())
+                        ->iconColor(Color::Indigo)
+                        ->label("عدد الماكينات"),
+                    TextEntry::make("description")
+                        ->icon('heroicon-o-document-text')
+                        ->iconColor(Color::Red)
+                        ->default('لا يوجد')
+                        ->html()
+                        ->columnSpanFull()
+                        ->label("وصف العميل"),
+                ])
+                ->columns(4)
+        ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            MachinesRelationManager::class
+        ];
     }
 
     public static function getPages(): array

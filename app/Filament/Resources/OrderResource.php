@@ -4,12 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Customer;
+use App\Models\Machine;
 use App\Models\MachineModel;
 use App\Models\Order;
 use App\Models\User;
 use App\Support\Services\OrderService;
 use Exception;
 use Filament\Forms;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
@@ -37,13 +39,13 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('customer_id')
+                Forms\Components\Select::make('machine_id')
+                    ->label('الماكينة')
+                    ->relationship('machine', 'serial_number')
                     ->searchable()
                     ->preload()
-                    ->default(request('customer_id'))
-                    ->label('العميل')
-                    ->relationship('customer', 'name')
-                    ->required(),
+                    ->required()
+                    ->createOptionForm(MachineResource::form($form)->getComponents()),
                 Forms\Components\Select::make('branch_id')
                     ->label('الفرع')
                     ->default(request()->filled('customer_id') ? Customer::query()->find(request('customer_id'))?->branch_id : null)
@@ -53,27 +55,6 @@ class OrderResource extends Resource
                     ->label('وصف الطلب')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\Fieldset::make('بيانات الماكينة')
-                    ->schema([
-                        Forms\Components\Grid::make(2)
-                            ->schema([
-                                Forms\Components\Select::make('machine_type_id')
-                                    ->searchable()
-                                    ->nullable()
-                                    ->relationship('machineType', 'name')
-                                    ->preload()
-                                    ->required()
-                                    ->live()
-                                    ->label('نوع الماكينة'),
-                                Forms\Components\Select::make('machine_model_id')
-                                    ->searchable()
-                                    ->options(fn(Forms\Get $get) => MachineModel::query()->where('machine_type_id', $get('machine_type_id'))->pluck('model', 'id'))
-                                    ->nullable()
-                                    ->required()
-                                    ->preload()
-                                    ->label('موديل الماكينة'),
-                            ]),
-                    ]),
                 Forms\Components\Select::make('type')
                     ->required()
                     ->label('نوع الطلب')
@@ -110,12 +91,12 @@ class OrderResource extends Resource
                 ->searchable()
                 ->numeric()
                 ->sortable(),
-            Tables\Columns\TextColumn::make('serial_number')
+            Tables\Columns\TextColumn::make('machine.serial_number')
                 ->placeholder('غير معروف')
                 ->label('سيريال')
                 ->searchable()
                 ->sortable(),
-            Tables\Columns\TextColumn::make('machineModel.model')
+            Tables\Columns\TextColumn::make('machine.machineModel.model')
                 ->placeholder('غير معروف')
                 ->label('موديل الماكينة')
                 ->searchable()
@@ -148,7 +129,7 @@ class OrderResource extends Resource
         if (auth()->user()->role != 'maintenance') {
             array_push(
                 $columns,
-                Tables\Columns\TextColumn::make('customer.name')
+                Tables\Columns\TextColumn::make('machine.customer.name')
                     ->label('العميل')
                     ->searchable()
                     ->numeric()
@@ -174,6 +155,10 @@ class OrderResource extends Resource
                     ->label('الحالة')
                     ->multiple()
                     ->options(OrderService::STATUSES),
+                Tables\Filters\SelectFilter::make('type')
+                    ->label('النوع')
+                    ->multiple()
+                    ->options(OrderService::TYPES),
                 Tables\Filters\SelectFilter::make('user_id')
                     ->label('المستخدم')
                     ->searchable()
