@@ -119,7 +119,8 @@ class OrderService
 
                     $order->update($orderData);
 
-                    $order->machine()->update(['serial_number' => $data['serial_number']]);
+                    if (isset($data['serial_number']))
+                        $order->machine()->update(['serial_number' => $data['serial_number']]);
 
                     SystemLog::query()->create([
                         'user_id' => auth()->id(),

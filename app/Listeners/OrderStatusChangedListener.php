@@ -6,7 +6,9 @@ use App\Events\OrderStatusChangedEvent;
 use App\Models\Message;
 use App\Models\Order;
 use App\Support\Notify\SMS;
+use App\Support\Notify\Whatsapp;
 use App\Support\Services\OrderService;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -22,6 +24,7 @@ class OrderStatusChangedListener implements ShouldQueue
 
     /**
      * Handle the event.
+     * @throws Exception
      */
     public function handle(OrderStatusChangedEvent $event): void
     {
@@ -29,9 +32,9 @@ class OrderStatusChangedListener implements ShouldQueue
             return;
         }
 
-        SMS::send(
+        (new \App\Support\Notify\Whatsapp)->send(
+            $event->order->machine->customer->phone,
             $this->handleMessage($event->status, $event->order, $event->description),
-            $event->order->machine->customer->phone
         );
     }
 

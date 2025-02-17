@@ -41,7 +41,7 @@ class CreateOrder extends CreateRecord
             DB::commit();
 
             return $order;
-        } catch (Exception $e) {
+        } catch (Exception) {
             DB::rollBack();
 
             abort(500);
