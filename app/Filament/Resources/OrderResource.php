@@ -43,6 +43,7 @@ class OrderResource extends Resource
                 Forms\Components\Select::make('customer_id')
                     ->label('العميل')
                     ->searchable()
+                    ->dehydrated(false)
                     ->preload()
                     ->options(Customer::query()->pluck('name', 'id'))
                     ->live()
