@@ -12,9 +12,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('queue:retry all')
-            ->everyMinute()
-            ->withoutOverlapping();
+//        $schedule->command('queue:retry all')
+//            ->everyMinute()
+//            ->withoutOverlapping();
 
         $schedule->command('queue:work --stop-when-empty')
             ->everyMinute()
