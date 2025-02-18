@@ -82,7 +82,11 @@ class OrderService
                         TextInput::make('serial_number')
                             ->required()
                             ->default(fn(Order $order) => $order->machine->getAttribute('serial_number'))
-                            ->unique('machines', 'serial_number')
+                            ->unique(
+                                'machines',
+                                'serial_number',
+                                fn (Order $order) => $order->machine
+                            )
                             ->string()
                             ->maxLength('191')
                             ->label('سيريال الماكينة'),
@@ -138,7 +142,7 @@ class OrderService
                         ->title('تم تحديث الحالة بنجاح')
                         ->success()
                         ->send();
-                } catch (Exception $e) {
+                } catch (Exception) {
                     DB::rollBack();
 
                     Notification::make()
