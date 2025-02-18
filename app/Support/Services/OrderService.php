@@ -81,7 +81,7 @@ class OrderService
                     ->schema([
                         TextInput::make('serial_number')
                             ->required()
-                            ->default(fn(Order $order) => $order->getAttribute('serial_number'))
+                            ->default(fn(Order $order) => $order->machine->getAttribute('serial_number'))
                             ->unique('machines', 'serial_number')
                             ->string()
                             ->maxLength('191')
