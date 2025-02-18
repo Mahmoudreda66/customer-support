@@ -278,12 +278,17 @@ class OrderResource extends Resource
                         ->iconColor(Color::Teal),
                     TextEntry::make("machine.customer.name")
                         ->label('العميل')
+                        ->hidden(fn() => auth()->user()->role == 'maintenance')
                         ->icon('heroicon-o-users')
                         ->iconColor(Color::Stone),
                     TextEntry::make("machine.customer.phone")
                         ->label('رقم هاتف العميل')
                         ->icon('heroicon-o-phone')
+                        ->hidden(fn() => auth()->user()->role == 'maintenance')
                         ->iconColor(Color::Sky),
+                    TextEntry::make('description')
+                        ->label('الوصف')
+                        ->html()
                 ])
                 ->columns(5),
             Section::make("ملحقات الماكينة")
