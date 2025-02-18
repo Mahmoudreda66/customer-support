@@ -137,7 +137,7 @@ class OrderService
                         ->title('تم تحديث الحالة بنجاح')
                         ->success()
                         ->send();
-                } catch (Exception) {
+                } catch (Exception $e) {
                     DB::rollBack();
 
                     Notification::make()
