@@ -115,6 +115,7 @@ class OrderResource extends Resource
             Tables\Columns\TextColumn::make('machine.serial_number')
                 ->placeholder('غير معروف')
                 ->label('سيريال')
+                ->copyable()
                 ->searchable()
                 ->sortable(),
             Tables\Columns\TextColumn::make('machine.machineModel.model')

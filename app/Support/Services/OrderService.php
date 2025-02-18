@@ -3,6 +3,7 @@
 namespace App\Support\Services;
 
 use App\Events\OrderStatusChangedEvent;
+use App\Models\Machine;
 use App\Models\Order;
 use App\Models\SystemLog;
 use Filament\Actions\Action;
@@ -67,12 +68,12 @@ class OrderService
                 Select::make('status')
                     ->label('حالة الطلب')
                     ->required()
-                    ->notIn(fn (Order $order) => [$order->status])
-                    ->default(fn (Order $order) => $order->status)
+                    ->notIn(fn(Order $order) => [$order->status])
+                    ->default(fn(Order $order) => $order->status)
                     ->live()
                     ->options(OrderService::statusesByRole(auth()->user()->role)),
                 Textarea::make('description')
-                    ->required(fn (Get $get) => in_array($get('status'), ['pending', 'finished', 'refactor', 'cancelled', 'called']))
+                    ->required(fn(Get $get) => in_array($get('status'), ['pending', 'finished', 'refactor', 'cancelled', 'called']))
                     ->label('وصف العملية')
                     ->rows(8)
                     ->string(),
@@ -80,12 +81,7 @@ class OrderService
                     ->schema([
                         TextInput::make('serial_number')
                             ->required()
-                            ->default(fn (Order $order) => $order->machine->getAttribute('serial_number'))
-                            ->unique(
-                                'machines',
-                                'serial_number',
-                                fn (Order $order) => $order->machine
-                            )
+                            ->default(fn(Order $order) => $order->machine->getAttribute('serial_number'))
                             ->string()
                             ->maxLength('191')
                             ->label('سيريال الماكينة'),
@@ -103,7 +99,7 @@ class OrderService
                             ->disk('public')
                             ->maxSize(8 * 1024),
                     ])
-                    ->visible(fn (Get $get) => $get('status') === 'finished'),
+                    ->visible(fn(Get $get) => $get('status') === 'finished'),
             ])
             ->action(function (array $data, Order $order) {
                 try {
@@ -111,11 +107,11 @@ class OrderService
                         'status' => $data['status'],
                     ];
 
-                    if (! empty($data['image_after'])) {
+                    if (!empty($data['image_after'])) {
                         $orderData['image_after'] = $data['image_after'];
                     }
 
-                    if (! empty($data['image_before'])) {
+                    if (!empty($data['image_before'])) {
                         $orderData['image_before'] = $data['image_before'];
                     }
 
@@ -124,7 +120,13 @@ class OrderService
                     $order->update($orderData);
 
                     if (isset($data['serial_number'])) {
-                        $order->machine()->update(['serial_number' => $data['serial_number']]);
+                        $oldMachine = Machine::query()->where('serial_number', $data['serial_number'])->first();
+
+                        if ($oldMachine) {
+                            $order->update(['machine_id' => $oldMachine->id]);
+                        } else {
+                            $order->machine()->update(['serial_number' => $data['serial_number']]);
+                        }
                     }
 
                     SystemLog::query()->create([
