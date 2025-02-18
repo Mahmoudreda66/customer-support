@@ -82,6 +82,7 @@ class OrderService
                         TextInput::make('serial_number')
                             ->required()
                             ->default(fn(Order $order) => $order->getAttribute('serial_number'))
+                            ->unique('machines', 'serial_number')
                             ->string()
                             ->maxLength('191')
                             ->label('سيريال الماكينة'),
