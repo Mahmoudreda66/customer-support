@@ -31,7 +31,7 @@ class MessageResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('key')
                     ->label('نوع الرسالة')
-                    ->formatStateUsing(fn($state) => OrderService::STATUSES[$state])
+                    ->formatStateUsing(fn ($state) => OrderService::STATUSES[$state])
                     ->disabled()
                     ->required()
                     ->maxLength(191),
@@ -47,7 +47,7 @@ class MessageResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('key')
-                    ->formatStateUsing(fn($state) => OrderService::STATUSES[$state])
+                    ->formatStateUsing(fn ($state) => OrderService::STATUSES[$state])
                     ->label('نوع الرسالة')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('message')

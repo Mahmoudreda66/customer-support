@@ -4,7 +4,6 @@ namespace App\Support\Notify;
 
 use Exception;
 use Illuminate\Support\Facades\Http;
-use function Laravel\Prompts\error;
 
 class Whatsapp
 {
@@ -23,8 +22,9 @@ class Whatsapp
                 $this->message_template($phone, $body, $image)
             );
 
-        if (!$response->json('success'))
-            throw new Exception("session not connected");
+        if (! $response->json('success')) {
+            throw new Exception('session not connected');
+        }
     }
 
     private function message_template($phone, $body, $image = null): array
@@ -35,23 +35,21 @@ class Whatsapp
             'phones' => [$phone],
             'phone' => $phone,
             'message' => $this->handleMessage($body),
-            'img' => 'data:image/png;base64,' . $image
+            'img' => 'data:image/png;base64,'.$image,
         ];
     }
 
-    private
-    function handleMessage(string $message): string
+    private function handleMessage(string $message): string
     {
-        $message .= "\n\n" . date('Y-m-d h:i:s A');
+        $message .= "\n\n".date('Y-m-d h:i:s A');
 
         $suffix = "\n\nBrain Inkjet 💻";
 
-        return $message . $suffix;
+        return $message.$suffix;
     }
 
-    private
-    function handle_phone_area_code($phone): string
+    private function handle_phone_area_code($phone): string
     {
-        return '2' . $phone;
+        return '2'.$phone;
     }
 }

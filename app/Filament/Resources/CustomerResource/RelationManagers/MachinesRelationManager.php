@@ -4,13 +4,10 @@ namespace App\Filament\Resources\CustomerResource\RelationManagers;
 
 use App\Filament\Resources\MachineResource;
 use App\Models\Machine;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MachinesRelationManager extends RelationManager
 {
@@ -48,7 +45,7 @@ class MachinesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('تاريخ الإنشاء')
                     ->dateTime()
-                    ->sortable()
+                    ->sortable(),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
@@ -58,7 +55,7 @@ class MachinesRelationManager extends RelationManager
                 Tables\Actions\Action::make('show_machine')
                     ->label('عرض الماكينة')
                     ->icon('heroicon-o-eye')
-                    ->url(fn(Machine $machine) => route('filament.admin.resources.machines.view', $machine->id)),
+                    ->url(fn (Machine $machine) => route('filament.admin.resources.machines.view', $machine->id)),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

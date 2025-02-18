@@ -8,7 +8,6 @@ use App\Models\SystemLog;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -35,7 +34,7 @@ class OrderService
     public static function statusesByRole(string $role): array
     {
         return match ($role) {
-            'maintenance' => ['working' => 'جاري العمل', 'pending' => 'طلب مُعلق', 'finished' => 'إنتهت الصيانة', 'cancelled' => 'تم الإلغاء',],
+            'maintenance' => ['working' => 'جاري العمل', 'pending' => 'طلب مُعلق', 'finished' => 'إنتهت الصيانة', 'cancelled' => 'تم الإلغاء'],
             'data_entry' => ['refactor' => 'مرتجع للصيانة', 'handed' => 'تم التسليم', 'cancelled' => 'تم الإلغاء', 'called' => 'تم الاتصال'],
             'customer_support' => ['refactor' => 'مرتجع للصيانة', 'called' => 'تم الاتصال'],
             default => self::STATUSES,
@@ -68,12 +67,12 @@ class OrderService
                 Select::make('status')
                     ->label('حالة الطلب')
                     ->required()
-                    ->notIn(fn(Order $order) => [$order->status])
-                    ->default(fn(Order $order) => $order->status)
+                    ->notIn(fn (Order $order) => [$order->status])
+                    ->default(fn (Order $order) => $order->status)
                     ->live()
                     ->options(OrderService::statusesByRole(auth()->user()->role)),
                 Textarea::make('description')
-                    ->required(fn(Get $get) => in_array($get('status'), ['pending', 'finished', 'refactor', 'cancelled', 'called']))
+                    ->required(fn (Get $get) => in_array($get('status'), ['pending', 'finished', 'refactor', 'cancelled', 'called']))
                     ->label('وصف العملية')
                     ->rows(8)
                     ->string(),
@@ -81,7 +80,7 @@ class OrderService
                     ->schema([
                         TextInput::make('serial_number')
                             ->required()
-                            ->default(fn(Order $order) => $order->machine->getAttribute('serial_number'))
+                            ->default(fn (Order $order) => $order->machine->getAttribute('serial_number'))
                             ->unique(
                                 'machines',
                                 'serial_number',
@@ -104,7 +103,7 @@ class OrderService
                             ->disk('public')
                             ->maxSize(8 * 1024),
                     ])
-                    ->visible(fn(Get $get) => $get('status') === 'finished'),
+                    ->visible(fn (Get $get) => $get('status') === 'finished'),
             ])
             ->action(function (array $data, Order $order) {
                 try {
@@ -112,11 +111,11 @@ class OrderService
                         'status' => $data['status'],
                     ];
 
-                    if (!empty($data['image_after'])) {
+                    if (! empty($data['image_after'])) {
                         $orderData['image_after'] = $data['image_after'];
                     }
 
-                    if (!empty($data['image_before'])) {
+                    if (! empty($data['image_before'])) {
                         $orderData['image_before'] = $data['image_before'];
                     }
 
@@ -124,8 +123,9 @@ class OrderService
 
                     $order->update($orderData);
 
-                    if (isset($data['serial_number']))
+                    if (isset($data['serial_number'])) {
                         $order->machine()->update(['serial_number' => $data['serial_number']]);
+                    }
 
                     SystemLog::query()->create([
                         'user_id' => auth()->id(),
@@ -158,7 +158,7 @@ class OrderService
         return Order::query()->latest()
             ->where([
                 ['id', '<', $order->getAttribute('id')],
-                ['branch_id', $order->getAttribute('branch_id')]
+                ['branch_id', $order->getAttribute('branch_id')],
             ])
             ->whereIn('status', ['working', 'created'])
             ->count();

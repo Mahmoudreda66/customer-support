@@ -15,7 +15,7 @@ class MessageSeeder extends Seeder
         $messages = [
             [
                 'key' => 'created',
-                'message' => 'تم إستلام الماكينة، أمامك [machines_queue] ماكينة'
+                'message' => 'تم إستلام الماكينة، أمامك [machines_queue] ماكينة',
             ],
             [
                 'key' => 'working',
@@ -23,11 +23,11 @@ class MessageSeeder extends Seeder
             ],
             [
                 'key' => 'pending',
-                'message' => ' الطلب رقم [order_id] قيد التعليق' . "\n" . '[message]',
+                'message' => ' الطلب رقم [order_id] قيد التعليق'."\n".'[message]',
             ],
             [
                 'key' => 'finished',
-                'message' => "تم الإنتهاء من الماكينة \nرقم الطلب: [order_id]\nسيريال: [serial]"
+                'message' => "تم الإنتهاء من الماكينة \nرقم الطلب: [order_id]\nسيريال: [serial]",
             ],
             [
                 'key' => 'handed',

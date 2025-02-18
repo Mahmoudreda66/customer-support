@@ -14,7 +14,6 @@ use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 
 class CustomerResource extends Resource
 {
@@ -82,10 +81,10 @@ class CustomerResource extends Resource
                     ->label('رقم الهاتف'),
                 Tables\Columns\TextColumn::make('address')
                     ->label('العنوان')
-                    ->formatStateUsing(fn(Customer $customer) => str($customer->address)->limit())
+                    ->formatStateUsing(fn (Customer $customer) => str($customer->address)->limit())
                     ->searchable(),
                 Tables\Columns\TextColumn::make('serial_number')
-                    ->state(fn(Customer $customer) => $customer->serial_number ?? 'لا يوجد')
+                    ->state(fn (Customer $customer) => $customer->serial_number ?? 'لا يوجد')
                     ->label('رقم السيريال')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('branch.name')
@@ -116,54 +115,54 @@ class CustomerResource extends Resource
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist->schema([
-            Section::make("بيانات العميل")
+            Section::make('بيانات العميل')
                 ->schema([
-                    TextEntry::make("name")
+                    TextEntry::make('name')
                         ->icon('heroicon-o-user')
                         ->iconColor(Color::Cyan)
-                        ->label("اسم العميل"),
-                    TextEntry::make("phone")
+                        ->label('اسم العميل'),
+                    TextEntry::make('phone')
                         ->icon('heroicon-o-phone')
                         ->iconColor(Color::Yellow)
-                        ->label("رقم الهاتف"),
-                    TextEntry::make("whatsapp")
+                        ->label('رقم الهاتف'),
+                    TextEntry::make('whatsapp')
                         ->icon('heroicon-o-device-phone-mobile')
                         ->iconColor(Color::Green)
-                        ->label("رقم الهاتف"),
-                    TextEntry::make("address")
+                        ->label('رقم الهاتف'),
+                    TextEntry::make('address')
                         ->icon('heroicon-o-map')
                         ->iconColor(Color::Pink)
-                        ->label("العنوان"),
-                    TextEntry::make("serial_number")
+                        ->label('العنوان'),
+                    TextEntry::make('serial_number')
                         ->icon('heroicon-o-hashtag')
                         ->iconColor(Color::Blue)
-                        ->label("رقم السيريال")
+                        ->label('رقم السيريال')
                         ->default('لا يوجد'),
-                    TextEntry::make("branch.name")
+                    TextEntry::make('branch.name')
                         ->icon('heroicon-o-tag')
                         ->iconColor(Color::Gray)
-                        ->label("الفرع"),
-                    TextEntry::make("orders_count")
+                        ->label('الفرع'),
+                    TextEntry::make('orders_count')
                         ->icon('heroicon-o-numbered-list')
-                        ->default(fn(Customer $customer) => $customer->machines()->count())
+                        ->default(fn (Customer $customer) => $customer->machines()->count())
                         ->iconColor(Color::Indigo)
-                        ->label("عدد الماكينات"),
-                    TextEntry::make("description")
+                        ->label('عدد الماكينات'),
+                    TextEntry::make('description')
                         ->icon('heroicon-o-document-text')
                         ->iconColor(Color::Red)
                         ->default('لا يوجد')
                         ->html()
                         ->columnSpanFull()
-                        ->label("وصف العميل"),
+                        ->label('وصف العميل'),
                 ])
-                ->columns(4)
+                ->columns(4),
         ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            MachinesRelationManager::class
+            MachinesRelationManager::class,
         ];
     }
 

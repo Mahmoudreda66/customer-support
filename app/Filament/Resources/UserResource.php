@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Support\Services\UserService;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
@@ -73,7 +72,7 @@ class UserResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('role')
-                    ->formatStateUsing(fn(User $user) => UserService::JOBS[$user->role])
+                    ->formatStateUsing(fn (User $user) => UserService::JOBS[$user->role])
                     ->label('الوظيفة')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -111,7 +110,7 @@ class UserResource extends Resource
                         session()->regenerate();
 
                         return redirect(route('filament.admin.pages.dashboard'));
-                    })
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

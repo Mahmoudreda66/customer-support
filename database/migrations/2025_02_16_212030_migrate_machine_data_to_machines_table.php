@@ -8,7 +8,6 @@ use App\Models\Order;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 class MigrateMachineDataToMachinesTable extends Migration
 {
@@ -44,7 +43,7 @@ class MigrateMachineDataToMachinesTable extends Migration
             }
 
             $order->update([
-                'machine_id' => $machine->id
+                'machine_id' => $machine->id,
             ]);
         }
 
@@ -56,7 +55,7 @@ class MigrateMachineDataToMachinesTable extends Migration
                 'serial_number',
                 'customer_id',
                 'machine_type_id',
-                'machine_model_id'
+                'machine_model_id',
             ]);
         });
     }

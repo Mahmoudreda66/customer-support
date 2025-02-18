@@ -16,12 +16,12 @@ class Order extends Model
     protected $casts = [
         'deadline' => 'datetime',
     ];
-    
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-   
+
     public function machine(): BelongsTo
     {
         return $this->belongsTo(Machine::class);

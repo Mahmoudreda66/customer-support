@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\MachineResource\Pages;
 
 use App\Filament\Resources\MachineResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewMachine extends ViewRecord

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MachineResource\Pages;
-use App\Filament\Resources\MachineResource\RelationManagers;
 use App\Filament\Resources\MachineResource\RelationManagers\OrdersRelationManager;
 use App\Models\Customer;
 use App\Models\Machine;
@@ -14,12 +13,11 @@ use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MachineResource extends Resource
 {
     protected static ?string $model = Machine::class;
+
     protected static ?string $navigationLabel = 'الماكينات';
 
     protected static ?string $label = 'ماكينة';
@@ -55,9 +53,9 @@ class MachineResource extends Resource
                     ->label('نوع الماكينة'),
                 Forms\Components\Select::make('machine_model_id')
                     ->searchable()
-                    ->options(fn(Forms\Get $get) => MachineModel::query()->where('machine_type_id', $get('machine_type_id'))->pluck('model', 'id'))
+                    ->options(fn (Forms\Get $get) => MachineModel::query()->where('machine_type_id', $get('machine_type_id'))->pluck('model', 'id'))
                     ->nullable()
-                    ->disabled(fn(Get $get) => !$get('machine_type_id'))
+                    ->disabled(fn (Get $get) => ! $get('machine_type_id'))
                     ->required()
                     ->preload()
                     ->label('موديل الماكينة'),
@@ -92,7 +90,7 @@ class MachineResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('تاريخ الإنشاء')
                     ->dateTime()
-                    ->sortable()
+                    ->sortable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -108,7 +106,7 @@ class MachineResource extends Resource
     public static function getRelations(): array
     {
         return [
-            OrdersRelationManager::class
+            OrdersRelationManager::class,
         ];
     }
 

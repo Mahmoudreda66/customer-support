@@ -40,7 +40,7 @@ class ListOrders extends ListRecords
         foreach (Branch::query()->get() as $branch) {
             $tabs[] = Tab::make($branch->name)
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('branch_id', $branch->id))
-                ->badge(Order::query()->where('branch_id', $branch->id)->when(auth()->user()->role === 'maintenance', fn($q) => $q->whereIn('status', ['created', 'working', 'pending']))->count());
+                ->badge(Order::query()->where('branch_id', $branch->id)->when(auth()->user()->role === 'maintenance', fn ($q) => $q->whereIn('status', ['created', 'working', 'pending']))->count());
         }
 
         return $tabs;
