@@ -329,6 +329,7 @@ class OrderResource extends Resource
                                 if ($order->image_before) {
                                     $schema = [
                                         ImageEntry::make("image_before")
+                                            ->url(asset('storage/' . $order->image_before), true)
                                     ];
                                 } else {
                                     $schema = [
@@ -345,6 +346,7 @@ class OrderResource extends Resource
                                 if ($order->image_after) {
                                     $schema = [
                                         ImageEntry::make("image_after")
+                                            ->url(asset('storage/' . $order->image_after), true)
                                     ];
                                 } else {
                                     $schema = [
