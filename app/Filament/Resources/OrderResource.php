@@ -169,7 +169,7 @@ class OrderResource extends Resource
         }
 
         $tableData = $table
-            ->query(Order::query()->when(auth()->user()->role === 'maintenance', fn($q) => $q->whereIn('status', ['created', 'working', 'pending'])))
+            ->query(Order::query()->when(auth()->user()->role === 'maintenance', fn($q) => $q->whereIn('status', ['created', 'working', 'pending', 'refactor'])))
             ->columns($columns)
             ->defaultSort('id', 'DESC')
             ->filters([
@@ -239,6 +239,10 @@ class OrderResource extends Resource
         return $infolist->schema([
             Section::make('بيانات الطلب')
                 ->schema([
+                    TextEntry::make("id")
+                        ->label('رقم الطلب')
+                        ->icon('heroicon-o-hashtag')
+                        ->iconColor(Color::Gray),
                     TextEntry::make("user.name")
                         ->label('مُنشئ الطلب')
                         ->icon('heroicon-o-pencil')
