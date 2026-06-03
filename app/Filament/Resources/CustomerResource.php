@@ -14,6 +14,8 @@ use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class CustomerResource extends Resource
 {
@@ -72,6 +74,7 @@ class CustomerResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->query(Customer::query()->withCount('machines'))
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('اسم العميل')
@@ -79,12 +82,15 @@ class CustomerResource extends Resource
                 Tables\Columns\TextColumn::make('phone')
                     ->searchable()
                     ->label('رقم الهاتف'),
+                Tables\Columns\TextColumn::make('machines_count')
+                    ->label('عدد الماكينات')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('address')
                     ->label('العنوان')
-                    ->formatStateUsing(fn (Customer $customer) => str($customer->address)->limit())
                     ->searchable(),
                 Tables\Columns\TextColumn::make('serial_number')
-                    ->state(fn (Customer $customer) => $customer->serial_number ?? 'لا يوجد')
+                    ->state(fn(Customer $customer) => $customer->serial_number ?? 'لا يوجد')
                     ->label('رقم السيريال')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('branch.name')
@@ -100,6 +106,25 @@ class CustomerResource extends Resource
                 Tables\Filters\SelectFilter::make('branch_id')
                     ->label('الفرع')
                     ->relationship('branch', 'name'),
+                Tables\Filters\Filter::make('no_orders_since')
+                    ->label('بدون طلبات من تاريخ')
+                    ->form([
+                        Forms\Components\DatePicker::make('from')
+                            ->label('متوقف من تاريخ'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query->when(
+                            filled($data['from'] ?? null),
+                            fn (Builder $q): Builder => $q->whereDoesntHave(
+                                'machines.orders',
+                                fn (Builder $orderQuery) => $orderQuery->whereDate(
+                                    'orders.created_at',
+                                    '>=',
+                                    $data['from']
+                                )
+                            )
+                        );
+                    }),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -108,6 +133,7 @@ class CustomerResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make(),
                 ]),
             ]);
     }
@@ -144,7 +170,7 @@ class CustomerResource extends Resource
                         ->label('الفرع'),
                     TextEntry::make('orders_count')
                         ->icon('heroicon-o-numbered-list')
-                        ->default(fn (Customer $customer) => $customer->machines()->count())
+                        ->default(fn(Customer $customer) => $customer->machines()->count())
                         ->iconColor(Color::Indigo)
                         ->label('عدد الماكينات'),
                     TextEntry::make('description')

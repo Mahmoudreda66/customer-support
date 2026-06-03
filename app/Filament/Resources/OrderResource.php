@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers\LogsRelationManager;
 use App\Models\Customer;
+use App\Models\MachineType;
 use App\Models\Order;
 use App\Models\User;
 use App\Support\Services\OrderService;
@@ -118,6 +119,11 @@ class OrderResource extends Resource
                 ->copyable()
                 ->searchable()
                 ->sortable(),
+            Tables\Columns\TextColumn::make('machine.machineType.name')
+                ->placeholder('غير معروف')
+                ->label('نوع الماكينة')
+                ->searchable()
+                ->sortable(),
             Tables\Columns\TextColumn::make('machine.machineModel.model')
                 ->placeholder('غير معروف')
                 ->label('موديل الماكينة')
@@ -181,17 +187,56 @@ class OrderResource extends Resource
                     ->label('النوع')
                     ->multiple()
                     ->options(OrderService::TYPES),
-                Tables\Filters\SelectFilter::make('user_id')
-                    ->label('المستخدم')
+                Tables\Filters\SelectFilter::make('machine_type_id')
+                    ->label('نوع الماكينة')
                     ->searchable()
-                    ->options(User::query()->where('role', 'maintenance')->pluck('name', 'id'))
-                    ->query(function (Builder $query, array $data) {
-                        $query->when($data['value'], function ($builder) use ($data) {
-                            $builder->whereHas('logs', function (Builder $query) use ($data) {
-                                $query->where('user_id', $data)
+                    ->preload()
+                    ->options(MachineType::query()->orderBy('name')->pluck('name', 'id'))
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query->when(
+                            filled($data['value']),
+                            fn (Builder $query): Builder => $query->whereHas(
+                                'machine',
+                                fn (Builder $q) => $q->where('machine_type_id', $data['value'])
+                            ),
+                        );
+                    }),
+                Tables\Filters\SelectFilter::make('maintenance_engineer_id')
+                    ->label('مهندس الصيانة')
+                    ->searchable()
+                    ->preload()
+                    ->options(
+                        User::query()
+                            ->where('role', 'maintenance')
+                            ->orderBy('name')
+                            ->pluck('name', 'id')
+                    )
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query->when(
+                            filled($data['value']),
+                            fn (Builder $query): Builder => $query->whereHas('logs', function (Builder $logQuery) use ($data) {
+                                $logQuery->where('user_id', $data['value'])
                                     ->whereRaw("JSON_EXTRACT(data, '$.status') = 'working'");
-                            });
-                        });
+                            }),
+                        );
+                    }),
+                Tables\Filters\SelectFilter::make('creator_user_id')
+                    ->label('منشئ الطلب')
+                    ->searchable()
+                    ->preload()
+                    ->options(
+                        User::query()
+                            ->where(function (Builder $q) {
+                                $q->whereNull('role')->orWhere('role', '<>', 'maintenance');
+                            })
+                            ->orderBy('name')
+                            ->pluck('name', 'id')
+                    )
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query->when(
+                            filled($data['value']),
+                            fn (Builder $query): Builder => $query->where('user_id', $data['value']),
+                        );
                     }),
                 Tables\Filters\Filter::make('created_at')
                     ->form([
