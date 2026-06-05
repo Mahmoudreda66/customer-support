@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class OrdersRelationManager extends RelationManager
 {
@@ -26,12 +27,12 @@ class OrdersRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('description')
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['latestWorkingLog.user']))
             ->columns([
                 Tables\Columns\TextColumn::make('description')
                     ->label('الوصف')
                     ->html(),
-                Tables\Columns\TextColumn::make('repairer_name')
-                    ->state(fn (Order $order) => $order->repairer_engineer?->name)
+                Tables\Columns\TextColumn::make('latestWorkingLog.user.name')
                     ->placeholder('لم يتم الاستلام')
                     ->label('موظف الصيانة'),
                 Tables\Columns\TextColumn::make('created_at')
